@@ -7,10 +7,15 @@
     "dev": "bun --watch src/index.ts"
   },
   "dependencies": {
-    "elysia": "latest"
+    "better-auth": "^1.6.23",
+    "bunqueue": "^2.8.26",
+    "drizzle-orm": "^0.45.2",
+    "elysia": "latest",
+    "pg": "^8.22.0"
   },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "@types/pg": "^8.20.0"
   },
   "peerDependencies": {
     "typescript": "^5"
