@@ -1,7 +1,11 @@
 import { Elysia } from "elysia";
+import videosRouter from "./videos/routes";
+import postsRouter from "./posts/routes";
 
-const app = new Elysia().get("/", () => "Hello Elysia").listen(3000);
+const app = new Elysia()
+  .mount("/api/videos", videosRouter)
+  .mount("/api/posts", postsRouter);
 
 console.log(
-  `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`
+  `🦊 Vector is running at: ${app.server?.hostname}:${app.server?.port}`,
 );
