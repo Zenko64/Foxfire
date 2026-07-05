@@ -3,7 +3,12 @@
   "license": "AGPL-3.0-only",
   "scripts": {
     "dev": "turbo dev",
-    "build": "turbo build"
+    "build": "turbo build",
+    "lint": "prettier . --write",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown"
   },
   "workspaces": [
     "apps/*",
@@ -15,7 +20,9 @@
   "devDependencies": {
     "@types/bun": "latest",
     "@types/pg": "^8.20.0",
-    "drizzle-kit": "^1.0.0-rc.4"
+    "drizzle-kit": "^1.0.0-rc.4",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.0.8"
   },
   "peerDependencies": {
     "typescript": "^5"
