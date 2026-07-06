@@ -7,7 +7,8 @@ import {
   timestamp,
   varchar,
 } from "drizzle-orm/pg-core";
-import { user } from "../lib/auth-schema";
+import { relations } from "drizzle-orm";
+import { user } from "./auth-schema";
 
 export const privacyEnum = pgEnum("privacy", ["public", "private"]);
 
@@ -27,3 +28,10 @@ export const postsTable = pgTable("posts", {
     () => new Date(),
   ),
 });
+
+export const postRelations = relations(postsTable, ({ one }) => ({
+  author: one(user, { fields: [postsTable.authorId], references: [user.id] }),
+}));
+export const userRelations = relations(user, ({ many }) => ({
+  posts: many(postsTable),
+}));

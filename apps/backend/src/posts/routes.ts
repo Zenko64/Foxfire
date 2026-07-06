@@ -1,10 +1,6 @@
-import Elysia from "elysia";
+import { Hono } from "hono";
+import { getPosts } from "./controllers";
 
-const postsRouter = new Elysia()
-  .get("/", () => {})
-  .post("/", () => {})
-  .get("/:nanoid", () => {})
-  .patch("/:nanoid", () => {})
-  .delete("/:nanoid", () => {});
+const postsRouter = new Hono().get("/", getPosts);
 
 export default postsRouter;
