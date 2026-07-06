@@ -8,7 +8,7 @@ import db from "../db";
  * @param userId - Logged In UserID, to return private user data.
  * @returns
  */
-export async function queryPosts(
+export async function getPosts(
   { query, authorId }: { query?: string; authorId?: string },
   userId?: string,
 ) {
@@ -45,3 +45,8 @@ export async function queryPosts(
     });
   });
 }
+
+export async function getPost() {}
+export async function createPost() {}
+export async function patchPost() {}
+export async function deletePost() {}

@@ -1,5 +1,5 @@
 import type { Context } from "hono";
-import { queryPosts } from "./handlers";
+import * as handlers from "./handlers";
 import db from "../db";
 import { eq } from "drizzle-orm";
 
@@ -16,7 +16,7 @@ export async function getPosts(c: Context) {
     : undefined;
 
   try {
-    queryPosts({
+    handlers.getPosts({
       query,
       authorId,
     });
@@ -24,3 +24,8 @@ export async function getPosts(c: Context) {
     console.error("Query Failed: ", e);
   }
 }
+
+export async function getPost(c: Context) {}
+export async function createPost(c: Context) {}
+export async function patchPost(c: Context) {}
+export async function deletePost(c: Context) {}
