@@ -1,10 +1,10 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import * as schema from "../../src/db/auth-schema";
-import db from "../db";
-import { username } from "better-auth/plugins";
+import { username, testUtils } from "better-auth/plugins";
+import db from "./db";
 
-export const auth = betterAuth({
+const auth = betterAuth({
   database: drizzleAdapter(db, { provider: "pg", schema }),
   baseURL: process.env.BETTER_AUTH_URL!,
   emailAndPassword: { enabled: true },
@@ -13,6 +13,7 @@ export const auth = betterAuth({
       minUsernameLength: 3,
       maxUsernameLength: 30,
     }),
+    testUtils(),
   ],
   socialProviders: {
     discord: {
@@ -35,7 +36,6 @@ export const auth = betterAuth({
   },
 });
 
-export type AuthType = {
-  user: typeof auth.$Infer.Session.user | null;
-  session: typeof auth.$Infer.Session.session | null;
-};
+export const test = (await auth.$context).test;
+
+export default auth;
