@@ -1,7 +1,7 @@
+import path from "node:path";
 import { PGlite } from "@electric-sql/pglite";
 import { drizzle } from "drizzle-orm/pglite";
 import { migrate } from "drizzle-orm/pglite/migrator";
-import path from "path";
 import * as authSchema from "../../src/db/auth-schema";
 import * as schema from "../../src/db/schema";
 

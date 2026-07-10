@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, mock } from "bun:test";
+import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import auth, { test } from "./lib/auth";
 import type { MockUser } from "./lib/types";
 

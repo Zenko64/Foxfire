@@ -30,6 +30,7 @@ describe("Posting Module", () => {
 			text: "Hello, World.",
 			nanoid,
 		});
+
 		expect(post!.nanoid).toBe(nanoid);
 	});
 	it("Updates a Post", async () => {
@@ -39,7 +40,6 @@ describe("Posting Module", () => {
 			text: "Hello, World.",
 			nanoid,
 		});
-
 		const updatedPost = await handler.updatePost(
 			{ text: "Goodbye, World." },
 			{ nanoid: post!.nanoid },
@@ -55,7 +55,6 @@ describe("Posting Module", () => {
 			text: "Hello, World.",
 			nanoid,
 		});
-
 		await handler.deletePost({ nanoid: post!.nanoid });
 
 		const result = await handler.getPost({ nanoid: post!.nanoid });
