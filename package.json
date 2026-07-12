@@ -28,6 +28,7 @@
 	"dependencies": {
 		"@electric-sql/pglite": "^0.5.4",
 		"prettier": "^3.9.4",
+		"react-router": "^8.2.0",
 		"turbo": "^2.10.3"
 	}
 }

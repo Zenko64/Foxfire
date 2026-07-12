@@ -1,0 +1,34 @@
+nav {
+	position: fixed;
+	background-color: var(--color-background);
+
+	top: 0;
+	left: 0;
+	right: 0;
+
+	border-block: solid 1px var(--color-border);
+
+	display: flex;
+	justify-content: center;
+	align-content: center;
+	margin-inline: calc(50% - 50vw);
+	margin-top: 1.75rem;
+	height: 3.25rem;
+}
+nav > button {
+	border-left: solid 1px var(--color-border);
+}
+
+nav > button:last-child {
+	border-right: solid 1px var(--color-border);
+}
+
+nav::after {
+	position: absolute;
+	content: "";
+	inset: 0;
+	max-width: min(1000px, calc(100vw - 2rem));
+	margin-inline: auto;
+	border-inline: solid 1px var(--color-border);
+	pointer-events: none;
+}
