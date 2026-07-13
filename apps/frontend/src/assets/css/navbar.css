@@ -9,18 +9,36 @@ nav {
 	border-block: solid 1px var(--color-border);
 
 	display: flex;
-	justify-content: center;
+	justify-content: space-between;
 	align-content: center;
-	margin-inline: calc(50% - 50vw);
 	margin-top: 1.75rem;
 	height: 3.25rem;
+
+	padding-inline: max(1rem, calc((100vw - 1000px) / 2));
 }
-nav > button {
+
+nav > span:first-child {
+	justify-self: start;
+}
+
+nav > span {
+	justify-self: start;
+}
+
+nav > span > button {
 	border-left: solid 1px var(--color-border);
 }
 
-nav > button:last-child {
+nav > span > button:last-child {
 	border-right: solid 1px var(--color-border);
+}
+
+nav > span:last-child > button {
+	border-left: solid 1px var(--color-border);
+}
+
+nav > span:last-child > button:last-child {
+	border-right: none;
 }
 
 nav::after {

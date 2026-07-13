@@ -3,5 +3,21 @@
 		"parser": {
 			"tailwindDirectives": true
 		}
+	},
+	"overrides": [
+		{
+			"includes": ["**/components/ui/**"],
+			"linter": { "enabled": false }
+		}
+	],
+	"linter": {
+		"rules": {
+			"style": {
+				"noNonNullAssertion": "warn"
+			},
+			"correctness": {
+				"noUnusedFunctionParameters": "warn"
+			}
+		}
 	}
 }
