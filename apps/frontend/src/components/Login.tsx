@@ -1,5 +1,5 @@
-import { GalleryVerticalEnd } from "lucide-react";
-import { useState } from "react";
+import { ArrowRight, GalleryVerticalEnd } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
 	Field,
@@ -12,6 +12,11 @@ import { Input } from "@/components/ui/input";
 
 export function LoginForm() {
 	const [action, setAction] = useState<"register" | "auth">("auth");
+	const [stage, setStage] = useState<"email" | "password">("email");
+
+	useEffect(() => {
+		setStage("email");
+	}, [action]);
 
 	return (
 		<form>
@@ -47,17 +52,39 @@ export function LoginForm() {
 					)}
 				</div>
 				<Field>
-					<FieldLabel htmlFor="email">Email</FieldLabel>
-					<Input
-						id="email"
-						type="email"
-						placeholder="user@example.com"
-						required
-					/>
-				</Field>
-				<Field>
-					{action === "auth" && <Button type="submit">Login</Button>}
-					{action === "register" && <Button type="submit">Sign Up</Button>}
+					{stage === "email" && (
+						<>
+							<FieldLabel htmlFor="email">Email</FieldLabel>
+							<span className="flex flex-row items-center justify-around">
+								<Input
+									id="email"
+									type="email"
+									placeholder="user@example.com"
+									required
+								/>
+								<Button
+									size="icon"
+									variant={"outline"}
+									onClick={() => setStage("password")}
+								>
+									<ArrowRight />
+								</Button>
+							</span>
+						</>
+					)}
+					{stage === "password" && (
+						<>
+							<FieldLabel htmlFor="password">Password</FieldLabel>
+							<Input
+								id="password"
+								type="password"
+								placeholder="Password"
+								required
+							/>
+							{action === "auth" && <Button type="submit">Login</Button>}
+							{action === "register" && <Button type="submit">Sign Up</Button>}
+						</>
+					)}
 				</Field>
 				<FieldSeparator>Or</FieldSeparator>
 				<Field className="grid gap-4 sm:grid-cols-3">

@@ -8,9 +8,9 @@ nav {
 
 	border-block: solid 1px var(--color-border);
 
-	display: flex;
-	justify-content: space-between;
-	align-content: center;
+	display: grid;
+	grid-template-columns: 1fr auto 1fr;
+
 	margin-top: 1.75rem;
 	height: 3.25rem;
 
@@ -21,8 +21,8 @@ nav > span:first-child {
 	justify-self: start;
 }
 
-nav > span {
-	justify-self: start;
+nav > span:last-child {
+	justify-self: end;
 }
 
 nav > span > button {
