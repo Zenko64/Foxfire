@@ -55,17 +55,19 @@ export function LoginForm() {
 					{stage === "email" && (
 						<>
 							<FieldLabel htmlFor="email">Email</FieldLabel>
-							<span className="flex flex-row items-center justify-around">
+							<span className="flex flex-row items-stretch">
 								<Input
 									id="email"
 									type="email"
 									placeholder="user@example.com"
 									required
+									className="ring-inset"
 								/>
 								<Button
 									size="icon"
-									variant={"outline"}
+									variant="default"
 									onClick={() => setStage("password")}
+									className="border-0 ring-inset"
 								>
 									<ArrowRight />
 								</Button>
