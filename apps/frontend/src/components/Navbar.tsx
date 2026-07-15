@@ -3,7 +3,7 @@ import "@/assets/css/navbar.css";
 import { useNavigate } from "react-router";
 import { LoginForm } from "./Login";
 import { Button } from "./ui/button";
-import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
+import { Dialog, DialogTrigger } from "./ui/dialog";
 
 export function Navbar() {
 	const nav = useNavigate();
@@ -43,9 +43,7 @@ export function Navbar() {
 							</Button>
 						}
 					/>
-					<DialogContent>
-						<LoginForm />
-					</DialogContent>
+					<LoginForm />
 				</Dialog>
 			</span>
 		</nav>
