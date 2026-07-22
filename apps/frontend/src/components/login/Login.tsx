@@ -1,111 +1,114 @@
-import { revalidateLogic, useForm } from "@tanstack/react-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft, ArrowRight, Key } from "lucide-react";
 import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import z, { email, string } from "zod";
+import { authClient } from "@/lib/auth";
 import { Button } from "../ui/button";
 import { Field, FieldError } from "../ui/field";
 import { Input } from "./ui";
 
-export function Login() {
-	const [stage, setStage] = useState<"email" | "password">("email");
+const formSchema = z.object({
+	email: email("Please enter a valid Email.").min(1, "Please enter an Email."),
+	password: string().min(1, "Please enter a password."),
+});
 
-	const formSchema = z.object({
-		email: email("Please enter a valid Email.").min(
-			1,
-			"Please enter an Email.",
-		),
-		password: string().min(1, "Please enter a password."),
+export function Login({ onSuccess }: { onSuccess?: () => void }) {
+	const [step, setStep] = useState<"email" | "password">("email");
+	const form = useForm<z.infer<typeof formSchema>>({
+		resolver: zodResolver(formSchema),
+		mode: "onTouched",
+		defaultValues: { email: "", password: "" },
 	});
 
-	const form = useForm({
-		defaultValues: {
-			email: "",
-			password: "",
-		},
-		validationLogic: revalidateLogic(),
-		onSubmit: async ({ value }) => {
-			if (stage === "email") {
-				setStage("password");
-				return;
-			}
-		},
-	});
+	async function onSubmit(e: React.SubmitEvent) {
+		e.preventDefault();
+
+		if (step === "email") {
+			await form.trigger("email");
+			setStep("password");
+			return;
+		}
+
+		if (!(await form.trigger(["email", "password"]))) return;
+
+		const { error } = await authClient.signIn.email(form.getValues());
+		if (error?.code === "INVALID_EMAIL_OR_PASSWORD") {
+			form.setError("email", {
+				message: "The provided credentials are incorrect.",
+			});
+			form.setValue("password", "");
+			setStep("email");
+		}
+		if (error) return;
+
+		onSuccess?.();
+	}
 
 	const Email = () => (
-		<form.Field
+		<Controller
 			name="email"
-			validators={{ onDynamic: formSchema.shape.email }}
-			children={(field) => {
-				const isInvalid = !field.state.meta.isValid;
-
-				return (
-					<Field data-invalid={isInvalid}>
-						<span className="flex flex-row items-stretch">
-							<Input
-								field={field}
-								type="email"
-								placeholder="Email"
-								isInvalid={isInvalid}
-							/>
-							<Button type="submit" size="icon" className="border-0 ring-inset">
-								<ArrowRight />
-							</Button>
-						</span>
-						{isInvalid && <FieldError errors={field.state.meta.errors} />}
-					</Field>
-				);
-			}}
+			control={form.control}
+			render={({ field, fieldState }) => (
+				<Field data-invalid={fieldState.invalid}>
+					<span className="flex flex-row items-stretch">
+						<Input
+							{...field}
+							id={field.name}
+							type="email"
+							placeholder="Email"
+							isInvalid={fieldState.invalid}
+						/>
+						<Button type="submit" size="icon" className="border-0 ring-inset">
+							<ArrowRight />
+						</Button>
+					</span>
+					{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+				</Field>
+			)}
 		/>
 	);
 
 	const Password = () => (
-		<form.Field
+		<Controller
 			name="password"
-			validators={{ onDynamic: formSchema.shape.password }}
-			children={(field) => {
-				const isInvalid = !field.state.meta.isValid;
-
-				return (
-					<Field data-invalid={isInvalid}>
-						<span className="flex flex-row items-stretch">
-							<Input
-								field={field}
-								type="password"
-								placeholder="Password"
-								isInvalid={isInvalid}
-							/>
-							<Button type="submit" size="icon" className="border-0 ring-inset">
-								<Key />
-							</Button>
-						</span>
-						{isInvalid && <FieldError errors={field.state.meta.errors} />}
-					</Field>
-				);
-			}}
+			control={form.control}
+			render={({ field, fieldState }) => (
+				<Field data-invalid={fieldState.invalid}>
+					<span className="flex flex-row items-stretch">
+						<Input
+							{...field}
+							id={field.name}
+							type="password"
+							placeholder="Password"
+							isInvalid={fieldState.invalid}
+						/>
+						<Button type="submit" size="icon" className="border-0 ring-inset">
+							<Key />
+						</Button>
+					</span>
+					{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+				</Field>
+			)}
 		/>
 	);
 
 	return (
-		<form
-			noValidate
-			onSubmit={(e) => {
-				e.preventDefault();
-				form.handleSubmit();
-			}}
-		>
-			{stage === "password" && (
+		<form noValidate onSubmit={onSubmit}>
+			{step === "password" && (
 				<Button
 					type="button"
 					variant="ghost"
 					size="icon-sm"
 					className="absolute top-2 left-2"
-					onClick={() => setStage("email")}
+					onClick={() => setStep("email")}
 				>
 					<ArrowLeft />
 				</Button>
 			)}
-			{stage === "email" && <Email />}
-			{stage === "password" && <Password />}
+
+			{step === "email" && <Email />}
+			{step === "password" && <Password />}
 		</form>
 	);
 }
