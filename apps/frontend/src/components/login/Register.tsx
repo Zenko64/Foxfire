@@ -74,7 +74,7 @@ export function Register({ onSuccess }: { onSuccess?: () => void }) {
 							id={field.name}
 							type="email"
 							placeholder="Email"
-							aria-invalid={fieldState.invalid}
+							isInvalid={fieldState.invalid}
 						/>
 						<Button type="submit" size="icon" className="border-0 ring-inset">
 							<ArrowRight />
