@@ -6,6 +6,8 @@ import z, { email, string } from "zod";
 import { authClient } from "@/lib/auth";
 import { Button } from "../ui/button";
 import { Field, FieldError } from "../ui/field";
+import { Spinner } from "../ui/spinner";
+import { toast } from "../ui/toast";
 import { Input } from "./ui";
 
 const formSchema = z.object({
@@ -27,6 +29,8 @@ type FormValues = z.infer<typeof formSchema>;
 
 export function Register({ onSuccess }: { onSuccess?: () => void }) {
 	const [step, setStep] = useState(0);
+	const [isPending, setPending] = useState<boolean>(false);
+
 	const form = useForm<FormValues>({
 		resolver: zodResolver(formSchema),
 		mode: "onTouched",
@@ -46,18 +50,28 @@ export function Register({ onSuccess }: { onSuccess?: () => void }) {
 		if (!(await form.trigger(["name", "username", "email", "password"])))
 			return;
 
+		setPending(true);
 		const { error } = await authClient.signUp.email(form.getValues());
-		if (error?.code === "USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL") {
-			form.setError("email", { message: "This Account Already Exists." });
-			setStep(0);
-			return;
-		} else if (error?.code === "USERNAME_IS_ALREADY_TAKEN") {
-			form.setError("username", {
-				message: "This Username Is Already Taken.",
-			});
+		setPending(false);
+		if (error) {
+			switch (error.code) {
+				case "USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL":
+					form.setError("email", { message: "This Account Already Exists." });
+					setStep(0);
+					break;
+				case "USERNAME_IS_ALREADY_TAKEN":
+					form.setError("username", {
+						message: "This Username Is Already Taken.",
+					});
+					break;
+				default:
+					toast.add({
+						type: "error",
+						title: "An unknown error has occurred.",
+						description: "Please try again.",
+					});
+			}
 		}
-		if (error) return;
-
 		onSuccess?.();
 	}
 
@@ -140,8 +154,13 @@ export function Register({ onSuccess }: { onSuccess?: () => void }) {
 								placeholder="Username"
 								isInvalid={fieldState.invalid}
 							/>
-							<Button type="submit" size="icon" className="border-0 ring-inset">
-								<Send />
+							<Button
+								type="submit"
+								size="icon"
+								className="border-0 ring-inset"
+								disabled={isPending}
+							>
+								{isPending ? <Spinner /> : <Send />}
 							</Button>
 						</span>
 						{fieldState.invalid && <FieldError errors={[fieldState.error]} />}

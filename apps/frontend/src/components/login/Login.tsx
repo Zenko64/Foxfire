@@ -6,6 +6,8 @@ import z, { email, string } from "zod";
 import { authClient } from "@/lib/auth";
 import { Button } from "../ui/button";
 import { Field, FieldError } from "../ui/field";
+import { Spinner } from "../ui/spinner";
+import { toast } from "../ui/toast";
 import { Input } from "./ui";
 
 const formSchema = z.object({
@@ -15,6 +17,7 @@ const formSchema = z.object({
 
 export function Login({ onSuccess }: { onSuccess?: () => void }) {
 	const [step, setStep] = useState<"email" | "password">("email");
+	const [isPending, setPending] = useState<boolean>(false);
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		mode: "onTouched",
@@ -31,15 +34,28 @@ export function Login({ onSuccess }: { onSuccess?: () => void }) {
 
 		if (!(await form.trigger(["email", "password"]))) return;
 
+		setPending(true);
 		const { error } = await authClient.signIn.email(form.getValues());
-		if (error?.code === "INVALID_EMAIL_OR_PASSWORD") {
-			form.setError("email", {
-				message: "The provided credentials are incorrect.",
-			});
-			form.setValue("password", "");
-			setStep("email");
+		setPending(false);
+		if (error) {
+			switch (error.code) {
+				case "INVALID_EMAIL_OR_PASSWORD":
+					form.setError("email", {
+						message: "The provided credentials are incorrect.",
+					});
+					form.setValue("password", "");
+					setStep("email");
+					break;
+				default:
+					toast.add({
+						type: "error",
+						title: "An unknown error has occurred.",
+						description: "Please try again.",
+					});
+					break;
+			}
+			return;
 		}
-		if (error) return;
 
 		onSuccess?.();
 	}
@@ -81,9 +97,10 @@ export function Login({ onSuccess }: { onSuccess?: () => void }) {
 							type="password"
 							placeholder="Password"
 							isInvalid={fieldState.invalid}
+							disabled={isPending}
 						/>
 						<Button type="submit" size="icon" className="border-0 ring-inset">
-							<Key />
+							{isPending ? <Spinner /> : <Key />}
 						</Button>
 					</span>
 					{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
