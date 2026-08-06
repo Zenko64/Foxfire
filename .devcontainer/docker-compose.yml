@@ -1,0 +1,48 @@
+version: "3.8"
+
+services:
+  foxfire:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    volumes:
+      - ../..:/workspaces:cached
+
+    # Overrides default command so things don't shut down after the process ends.
+    command: sleep infinity
+    networks:
+      - foxfire-net
+    # Use "forwardPorts" in **devcontainer.json** to forward a port to the host system.
+    # Using the ports property here wil do nothing.
+
+  db:
+    image: postgres:latest
+    restart: unless-stopped
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - foxfire-net
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+    # Use "forwardPorts" in **devcontainer.json** to forward a port to the host system.
+    # Using the ports property here wil do nothing.
+
+  redis:
+    image: "redis:latest"
+    restart: unless-stopped
+    volumes:
+      - redis-data:/data
+    networks:
+      - foxfire-net
+    # Use "forwardPorts" in **devcontainer.json** to forward a port to the host system.
+    # Using the ports property here wil do nothing.
+
+networks:
+  foxfire-net:
+    driver: bridge
+
+volumes:
+  postgres-data:
