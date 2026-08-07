@@ -6,7 +6,7 @@ import db from "../db";
 
 export const auth = betterAuth({
 	database: drizzleAdapter(db, { provider: "pg", schema }),
-	baseURL: process.env.BETTER_AUTH_URL!,
+	baseURL: process.env.APP_URL!,
 	emailAndPassword: { enabled: true },
 	plugins: [
 		username({
