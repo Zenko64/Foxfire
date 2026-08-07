@@ -7,14 +7,18 @@ nav {
 	right: 0;
 
 	border-block: solid 1px var(--color-border);
-
 	display: grid;
 	grid-template-columns: 1fr auto 1fr;
 
 	margin-top: 1.75rem;
 	height: 3.25rem;
+	justify-content: space-between;
 
-	padding-inline: max(1rem, calc((100vw - 1000px) / 2));
+	padding-inline: calc(var(--rail-inset) + (var(--rail-width)));
+}
+nav span {
+	display: flex;
+	flex-direction: row;
 }
 
 nav > span:first-child {
@@ -23,30 +27,4 @@ nav > span:first-child {
 
 nav > span:last-child {
 	justify-self: end;
-}
-
-nav > span > button {
-	border-left: solid 1px var(--color-border);
-}
-
-nav > span > button:last-child {
-	border-right: solid 1px var(--color-border);
-}
-
-nav > span:last-child > button {
-	border-left: solid 1px var(--color-border);
-}
-
-nav > span:last-child > button:last-child {
-	border-right: none;
-}
-
-nav::after {
-	position: absolute;
-	content: "";
-	inset: 0;
-	max-width: min(1000px, calc(100vw - 2rem));
-	margin-inline: auto;
-	border-inline: solid 1px var(--color-border);
-	pointer-events: none;
 }

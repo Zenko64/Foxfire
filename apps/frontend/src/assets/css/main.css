@@ -1,10 +1,25 @@
 @import "tailwindcss";
 @import "./shad.css";
 
-main {
-	min-height: 100vh;
-	padding-top: 5rem;
-	max-width: min(1000px, calc(100vw - 2rem));
-	margin-inline: auto;
-	border-inline: solid 1px var(--color-border);
+:root {
+	--content-max: 1000px;
+	--content-gutter: 1rem;
+	--content-width: min(var(--content-max), 100% - var(--content-gutter) * 2);
+	--rail-width: 1px;
+	--rail-inset: calc((100% - var(--content-width)) / 2);
+}
+
+body {
+	width: var(--content-width);
+}
+
+body::after {
+	content: "";
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: var(--rail-inset);
+	right: var(--rail-inset);
+	pointer-events: none;
+	border-inline: 1px solid var(--color-border);
 }

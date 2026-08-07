@@ -12,6 +12,7 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+import { Separator } from "./ui/separator";
 
 export function Navbar() {
 	const nav = useNavigate();
@@ -23,6 +24,7 @@ export function Navbar() {
 		<nav>
 			<span />
 			<span>
+				<Separator orientation="vertical" />
 				<Button
 					variant="ghost"
 					size="icon"
@@ -31,6 +33,7 @@ export function Navbar() {
 				>
 					<HomeIcon className="size-7.5 group-active:scale-95 group-hover:text-primary transition-all" />
 				</Button>
+				<Separator orientation="vertical" />
 				<Button
 					variant="ghost"
 					size="icon"
@@ -39,8 +42,10 @@ export function Navbar() {
 				>
 					<Mail className="size-7.5 group-active:scale-95 group-hover:text-primary transition-all" />
 				</Button>
+				<Separator orientation="vertical" />
 			</span>
 			<span>
+				<Separator orientation="vertical" />
 				<DropdownMenu>
 					{!session?.session && (
 						<Dialog
