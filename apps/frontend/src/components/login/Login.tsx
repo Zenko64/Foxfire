@@ -11,8 +11,10 @@ import { toast } from "../ui/toast";
 import { Input } from "./ui";
 
 const formSchema = z.object({
-	email: email("Please enter a valid Email.").min(1, "Please enter an Email."),
-	password: string().min(1, "Please enter a password."),
+	email: email("Please enter a valid Email.")
+		.min(1, "Please enter an Email.")
+		.trim(),
+	password: string().min(1, "Please enter a password.").trim(),
 });
 
 export function Login({ onSuccess }: { onSuccess?: () => void }) {

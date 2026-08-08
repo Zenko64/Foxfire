@@ -9,6 +9,16 @@
 			"name": "Foxfire",
 			"database": "foxfire",
 			"username": "postgres"
+		},
+		{
+			"ssh": "Disabled",
+			"previewLimit": 50,
+			"server": "siminet-02",
+			"port": 5432,
+			"driver": "PostgreSQL",
+			"name": "Server",
+			"database": "foxfire",
+			"username": "postgres"
 		}
 	]
 }

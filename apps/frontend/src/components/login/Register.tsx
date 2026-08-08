@@ -11,18 +11,22 @@ import { toast } from "../ui/toast";
 import { Input } from "./ui";
 
 const formSchema = z.object({
-	email: email("Please enter a valid Email.").min(1, "Please enter an Email."),
+	email: email("Please enter a valid Email.")
+		.min(1, "Please enter an Email.")
+		.trim(),
 	password: string()
 		.min(1, "Please enter a password.")
-		.min(8, "Your password must be at least 8 Characters long."),
-	name: string().min(1, "Please enter your name."),
+		.min(8, "Your password must be at least 8 Characters long.")
+		.trim(),
+	name: string().min(1, "Please enter your name.").trim(),
 	username: string()
 		.min(3, "Your username must be at least 3 Characters long.")
 		.max(30, "Your username must be at most 30 Characters long.")
 		.regex(
 			/^[a-zA-Z0-9_.]+$/,
 			"Your username can only contain letters, numbers, underscores, and periods.",
-		),
+		)
+		.trim(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
