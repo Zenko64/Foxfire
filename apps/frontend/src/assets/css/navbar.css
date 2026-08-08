@@ -9,7 +9,7 @@ nav {
 	border-block: solid 1px var(--color-border);
 	display: grid;
 	grid-template-columns: 1fr auto 1fr;
-	height: 3.25rem;
+	height: var(--topbar-height);
 	justify-content: space-between;
 }
 

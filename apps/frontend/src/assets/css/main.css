@@ -2,18 +2,29 @@
 @import "./shad.css";
 
 :root {
+	--topbar-height: 3.25rem;
 	--topbar-margin: 1.75rem;
-	--content-width: calc(514px);
+	--content-width: 768px;
 	--content-inset: calc(var(--rail-inset) + 1px);
 	--rail-width: 1px;
 	--rail-inset: calc(((100% - var(--content-width)) / 2));
 }
 
-@media (min-width: 512px) {
+@media (max-width: 512px) {
 	main {
 		max-width: var(--content-width);
+		margin-top: var(--topbar-height);
+	}
+}
+
+/* Applies to big displays */
+@media (min-width: 512px) {
+	.main-center {
+		margin-top: calc(var(--topbar-height) + var(--topbar-margin));
 	}
 	main {
+		max-width: var(--content-width);
+		margin-top: 0;
 		margin-inline: var(--content-inset);
 	}
 	main::after {
