@@ -2,18 +2,18 @@
 @import "./shad.css";
 
 :root {
-	--content-max: 1000px;
-	--content-gutter: 1rem;
-	--content-width: min(var(--content-max), 100% - var(--content-gutter) * 2);
+	--content-width: calc(50% + 2px);
+	--content-inset: calc(var(--rail-inset) + 1px);
 	--rail-width: 1px;
-	--rail-inset: calc((100% - var(--content-width)) / 2);
+	--rail-inset: calc(((100% - var(--content-width)) / 2));
 }
 
-body {
-	width: var(--content-width);
+main {
+	max-width: var(--content-width);
+	margin-inline: var(--content-inset);
 }
 
-body::after {
+main::after {
 	content: "";
 	position: fixed;
 	top: 0;

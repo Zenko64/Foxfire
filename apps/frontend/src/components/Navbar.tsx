@@ -88,7 +88,7 @@ export function Navbar() {
 							}
 						/>
 					)}
-					<DropdownMenuContent>
+					<DropdownMenuContent align="end" sideOffset={4} alignOffset={3}>
 						<DropdownMenuItem
 							variant="destructive"
 							onClick={() => authClient.signOut()}

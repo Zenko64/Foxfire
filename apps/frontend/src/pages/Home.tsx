@@ -1,7 +1,7 @@
 export function Home() {
 	return (
 		<>
-			<div></div>
+			<div className="p-20 h-full w-full bg-white"></div>
 		</>
 	);
 }
