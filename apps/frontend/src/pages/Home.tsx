@@ -1,7 +1,10 @@
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+
 export function Home() {
 	return (
-		<>
-			<div className="p-20 h-full w-full bg-white"></div>
-		</>
+		<div className="">
+			<Input />
+		</div>
 	);
 }

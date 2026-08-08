@@ -2,24 +2,28 @@
 @import "./shad.css";
 
 :root {
-	--content-width: calc(50% + 2px);
+	--topbar-margin: 1.75rem;
+	--content-width: calc(514px);
 	--content-inset: calc(var(--rail-inset) + 1px);
 	--rail-width: 1px;
 	--rail-inset: calc(((100% - var(--content-width)) / 2));
 }
 
-main {
-	max-width: var(--content-width);
-	margin-inline: var(--content-inset);
-}
-
-main::after {
-	content: "";
-	position: fixed;
-	top: 0;
-	bottom: 0;
-	left: var(--rail-inset);
-	right: var(--rail-inset);
-	pointer-events: none;
-	border-inline: 1px solid var(--color-border);
+@media (min-width: 512px) {
+	main {
+		max-width: var(--content-width);
+	}
+	main {
+		margin-inline: var(--content-inset);
+	}
+	main::after {
+		content: "";
+		position: fixed;
+		top: 0;
+		bottom: 0;
+		left: var(--rail-inset);
+		right: var(--rail-inset);
+		pointer-events: none;
+		border-inline: 1px solid var(--color-border);
+	}
 }
