@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { nanoid as mkNanoid } from "nanoid";
-import * as handler from "../src/posts/handlers";
+import * as handler from "../src/posts/service";
 import { test } from "./lib/auth";
 import type { MockUser } from "./lib/types";
 
