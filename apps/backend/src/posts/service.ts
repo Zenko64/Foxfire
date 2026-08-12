@@ -1,6 +1,7 @@
 import { and, eq, ilike, or } from "drizzle-orm";
 import db from "../db";
 import { postsTable } from "../db/schema";
+import { BadRequestError, ForbiddenError, NotFoundError } from "../lib/errors";
 
 /**
  * @name getPosts
@@ -45,11 +46,18 @@ export async function getPosts(
 	});
 }
 
+/**
+ * @name getPost
+ * @description Queries a Post in the Posts Table.
+ * @param { id, nanoid } - Post Identifier
+ * @param userId - Logged In UserID, to return private user data.
+ * @returns
+ */
 export async function getPost(
 	postId: Partial<Pick<typeof postsTable.$inferSelect, "id" | "nanoid">>,
 	userId?: string,
 ) {
-	return await db.query.postsTable.findFirst({
+	const data = await db.query.postsTable.findFirst({
 		where: (r) => {
 			const conditions = [
 				or(
@@ -60,6 +68,10 @@ export async function getPost(
 
 			if (postId.id) conditions.push(eq(r.id, postId.id));
 			if (postId.nanoid) conditions.push(eq(r.nanoid, postId.nanoid));
+			if (conditions.length < 1)
+				throw new BadRequestError(
+					"The post to retrieve was not specified in the request payload.",
+				);
 
 			return and(...conditions);
 		},
@@ -79,6 +91,8 @@ export async function getPost(
 			},
 		},
 	});
+	if (!data) throw new NotFoundError();
+	return data;
 }
 
 export async function createPost(
@@ -88,18 +102,16 @@ export async function createPost(
 	>,
 ) {
 	return await db.transaction(async (tx) => {
-		const id = (
-			await tx
-				.insert(postsTable)
-				.values(postData)
-				.returning({ id: postsTable.id })
-		)[0]?.id;
+		const [newPost] = await tx
+			.insert(postsTable)
+			.values(postData)
+			.returning({ id: postsTable.id });
 
-		if (!id)
+		if (!newPost)
 			throw new Error("An unknown error has occurred while creating a post.");
 
 		return tx.query.postsTable.findFirst({
-			where: (p) => eq(p.id, id),
+			where: (p) => eq(p.id, newPost.id),
 			columns: {
 				nanoid: true,
 				text: true,
@@ -125,53 +137,92 @@ export async function updatePost(
 		Pick<typeof postsTable.$inferInsert, "text" | "privacy" | "pinned">
 	>,
 	postId: Partial<Pick<typeof postsTable.$inferSelect, "id" | "nanoid">>,
+	userId: string,
 ) {
 	return await db.transaction(async (tx) => {
 		const conditions = [];
-
 		if (postId.id) conditions.push(eq(postsTable.id, postId.id));
 		if (postId.nanoid) conditions.push(eq(postsTable.nanoid, postId.nanoid));
+		if (conditions.length < 1)
+			throw new BadRequestError(
+				"The post to update was not specified in the request payload.",
+			);
 
-		const id = (
-			await tx
-				.update(postsTable)
-				.set(postData)
-				.where(and(...conditions))
-				.returning({ id: postsTable.id })
-		)[0]?.id;
+		const [result] = await tx
+			.update(postsTable)
+			.set(postData)
+			.where(and(...conditions, eq(postsTable.authorId, userId)))
+			.returning({ id: postsTable.id });
 
-		if (!id)
-			throw new Error("An unknown error has occurred while creating a post.");
-
-		return tx.query.postsTable.findFirst({
-			where: (p) => eq(p.id, id),
-			columns: {
-				nanoid: true,
-				text: true,
-				pinned: true,
-				privacy: true,
-				createdAt: true,
-			},
-			with: {
-				author: {
-					columns: {
-						id: true,
-						displayUsername: true,
-						image: true,
+		if (result) {
+			return tx.query.postsTable.findFirst({
+				where: (p) => eq(p.id, result.id),
+				columns: {
+					nanoid: true,
+					text: true,
+					pinned: true,
+					privacy: true,
+					createdAt: true,
+				},
+				with: {
+					author: {
+						columns: {
+							id: true,
+							displayUsername: true,
+							image: true,
+						},
 					},
 				},
-			},
-		});
+			});
+		} else {
+			const verif = await tx.query.postsTable.findFirst({
+				where: and(...conditions),
+				columns: {
+					privacy: true,
+					authorId: true,
+				},
+			});
+
+			if (!verif || (verif.authorId !== userId && verif.privacy === "private"))
+				throw new NotFoundError("The specified post was not found.");
+			else if (verif.authorId !== userId)
+				throw new ForbiddenError(
+					"You don't have permission to edit this post.",
+				);
+		}
 	});
 }
 
 export async function deletePost(
 	postId: Partial<Pick<typeof postsTable.$inferSelect, "id" | "nanoid">>,
+	userId: string,
 ) {
 	const conditions = [];
-
 	if (postId.id) conditions.push(eq(postsTable.id, postId.id));
 	if (postId.nanoid) conditions.push(eq(postsTable.nanoid, postId.nanoid));
+	if (conditions.length < 1)
+		throw new BadRequestError(
+			"The post to delete was not specified in the request payload.",
+		);
 
-	return await db.delete(postsTable).where(and(...conditions));
+	const result = await db
+		.delete(postsTable)
+		.where(and(...conditions, eq(postsTable.authorId, userId)));
+
+	if (result.rowCount === 0) {
+		const verif = await db.query.postsTable.findFirst({
+			where: and(...conditions),
+			columns: {
+				privacy: true,
+				authorId: true,
+			},
+		});
+
+		if (!verif || (verif.authorId !== userId && verif.privacy === "private"))
+			throw new NotFoundError("The specified post was not found.");
+		else if (verif.authorId !== userId)
+			throw new ForbiddenError(
+				"You don't have permission to delete this post.",
+			);
+	}
 }
