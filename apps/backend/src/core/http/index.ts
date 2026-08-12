@@ -10,5 +10,8 @@ const app = factory
 	.route("/api/auth", authRouter)
 	.route("/api/posts", postsRouter);
 
+export function serveHttp() {
+	return Bun.serve({ fetch: app.fetch, port: env.PORT, hostname: env.HOST });
+}
+
 export type AppType = typeof app;
-export default { fetch: app.fetch, port: env.PORT, hostname: env.HOST };
