@@ -50,7 +50,7 @@ const postsRouter = factory
 	.patch(
 		"/:nanoid",
 		requireAuth,
-		zValidator("json", postSchema.optional()),
+		zValidator("json", postSchema.partial()),
 		async (c) => {
 			const data = c.req.valid("json");
 			const nanoid = c.req.param("nanoid");
@@ -58,6 +58,10 @@ const postsRouter = factory
 				await handlers.updatePost({ ...data }, { nanoid }, c.var.user.id),
 			);
 		},
-	);
+	)
+	.delete("/:nanoid", requireAuth, async (c) => {
+		const nanoid = c.req.param("nanoid");
+		return c.json(await handlers.deletePost({ nanoid }, c.var.user.id));
+	});
 
 export default postsRouter;

@@ -38,8 +38,9 @@ export async function getPosts(
 		with: {
 			author: {
 				columns: {
+					username: true,
+					displayUsername: true,
 					image: true,
-					name: true,
 				},
 			},
 		},
@@ -85,8 +86,9 @@ export async function getPost(
 		with: {
 			author: {
 				columns: {
+					username: true,
+					displayUsername: true,
 					image: true,
-					name: true,
 				},
 			},
 		},
@@ -122,7 +124,7 @@ export async function createPost(
 			with: {
 				author: {
 					columns: {
-						id: true,
+						username: true,
 						displayUsername: true,
 						image: true,
 					},
@@ -167,7 +169,7 @@ export async function updatePost(
 				with: {
 					author: {
 						columns: {
-							id: true,
+							username: true,
 							displayUsername: true,
 							image: true,
 						},

@@ -1,8 +1,7 @@
-import type { Env } from "hono";
 import { createFactory } from "hono/factory";
 import type { auth } from "../../lib/auth";
 
-export type AppEnv = Env & {
+export type AppEnv = {
 	Variables: {
 		session?: typeof auth.$Infer.Session.session | null;
 		user?: typeof auth.$Infer.Session.user | null;

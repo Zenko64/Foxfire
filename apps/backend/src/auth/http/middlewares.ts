@@ -1,10 +1,10 @@
-import type { Env } from "hono";
 import { createMiddleware } from "hono/factory";
+import type { AppEnv } from "../../core/http/factory";
 import { auth } from "../../lib/auth";
 import { UnauthorizedError } from "../../lib/errors";
 
 export const requireAuth = createMiddleware<
-	Env & {
+	AppEnv & {
 		Variables: {
 			session: typeof auth.$Infer.Session.session;
 			user: typeof auth.$Infer.Session.user;

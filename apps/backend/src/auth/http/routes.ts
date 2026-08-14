@@ -1,10 +1,10 @@
-import { Hono } from "hono";
+import { factory } from "../../core/http/factory";
 import { auth } from "../../lib/auth";
 
-const authRouter = new Hono({
-	strict: false,
-});
-
-authRouter.on(["POST", "GET"], "/*", (c) => auth.handler(c.req.raw));
+const authRouter = factory
+	.createApp({
+		strict: false,
+	})
+	.on(["POST", "GET"], "/*", (c) => auth.handler(c.req.raw));
 
 export default authRouter;
