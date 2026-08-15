@@ -58,7 +58,6 @@ export function Navbar() {
 										variant="ghost"
 										size="icon"
 										className="h-full w-auto aspect-square group"
-										onClick={() => nav("/")}
 									>
 										<KeyIcon className="size-7.5 group-active:scale-95 group-hover:text-primary transition-all" />
 									</Button>
