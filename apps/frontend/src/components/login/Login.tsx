@@ -75,6 +75,7 @@ export function Login({ onSuccess }: { onSuccess?: () => void }) {
 							type="email"
 							placeholder="Email"
 							isInvalid={fieldState.invalid}
+							autoFocus
 						/>
 						<Button type="submit" size="icon" className="border-0 ring-inset">
 							<ArrowRight />
@@ -100,6 +101,7 @@ export function Login({ onSuccess }: { onSuccess?: () => void }) {
 							placeholder="Password"
 							isInvalid={fieldState.invalid}
 							disabled={isPending}
+							autoFocus
 						/>
 						<Button type="submit" size="icon" className="border-0 ring-inset">
 							{isPending ? <Spinner /> : <Key />}
