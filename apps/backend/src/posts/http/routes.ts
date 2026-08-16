@@ -1,3 +1,4 @@
+import { postSchema } from "@foxfire/types";
 import { zValidator } from "@hono/zod-validator";
 import { eq } from "drizzle-orm";
 import { nanoid as mkNanoid } from "nanoid";
@@ -5,7 +6,6 @@ import { requireAuth } from "../../auth/http/middlewares";
 import { factory } from "../../core/http/factory";
 import db from "../../db";
 import * as handlers from "../service";
-import { postSchema } from "../types";
 
 const postsRouter = factory
 	.createApp()
