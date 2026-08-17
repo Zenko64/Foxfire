@@ -3,7 +3,7 @@ import type { InferRequestType, InferResponseType } from "hono/client";
 import { client } from "@/lib/client";
 
 const queryKey = "posts";
-type Post = InferResponseType<typeof client.api.posts.$get>[number];
+export type Post = InferResponseType<typeof client.api.posts.$get>[number];
 type InsertPost = InferRequestType<typeof client.api.posts.$post>["json"];
 type PatchPost = InferRequestType<
 	(typeof client.api.posts)[":nanoid"]["$patch"]

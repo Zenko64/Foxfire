@@ -10,5 +10,3 @@ export const postSchema = z.object({
 	pinned: z.boolean(),
 	privacy: privacy,
 });
-
-export type Post = z.infer<typeof postSchema>;

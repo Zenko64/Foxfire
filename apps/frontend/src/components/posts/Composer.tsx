@@ -1,6 +1,6 @@
 import { postSchema } from "@foxfire/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff, Lock, Send } from "lucide-react";
+import { Eye, EyeOff, Lock, Send, X } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
 import type z from "zod";
 import { useCreatePost } from "@/hooks/posts/queries";
@@ -45,8 +45,8 @@ const privacyLabels = [
 	},
 ];
 
-export function Composer({ onSuccess }: { onSuccess: () => void }) {
-	const { status, error, mutate } = useCreatePost();
+export function Composer({ onComplete }: { onComplete: () => void }) {
+	const { status, mutate } = useCreatePost();
 	const form = useForm<z.infer<typeof postSchema>>({
 		resolver: zodResolver(postSchema),
 		mode: "onSubmit",
@@ -55,16 +55,15 @@ export function Composer({ onSuccess }: { onSuccess: () => void }) {
 
 	const onSubmit = (e: React.SubmitEvent) => {
 		e.preventDefault();
-		console.log("POST");
-		mutate(form.getValues());
-
-		if (status === "success") return onSuccess();
-		else if (status === "error")
-			toast.add({
-				title: "Failed to create post.",
-				description: error.message,
-				type: "error",
-			});
+		mutate(form.getValues(), {
+			onSuccess: onComplete,
+			onError: (err) =>
+				toast.add({
+					title: "Failed to create post.",
+					description: err.message,
+					type: "error",
+				}),
+		});
 	};
 
 	return (
@@ -125,18 +124,28 @@ export function Composer({ onSuccess }: { onSuccess: () => void }) {
 							</Select>
 						)}
 					/>
-					<Button type="submit">
-						{status === "pending" ? (
-							<>
-								<Spinner /> Posting
-							</>
-						) : (
-							<>
-								<Send />
-								Post
-							</>
-						)}
-					</Button>
+					<span className="flex flex-row items-center justify-center gap-1">
+						<Button
+							type="button"
+							variant="secondary"
+							onClick={() => onComplete()}
+						>
+							<X />
+							Cancel
+						</Button>
+						<Button type="submit">
+							{status === "pending" ? (
+								<>
+									<Spinner /> Posting
+								</>
+							) : (
+								<>
+									<Send />
+									Post
+								</>
+							)}
+						</Button>
+					</span>
 				</div>
 			</div>
 		</form>
