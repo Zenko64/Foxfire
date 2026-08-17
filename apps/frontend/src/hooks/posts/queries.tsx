@@ -20,10 +20,10 @@ export function usePosts() {
 	});
 }
 
-export function useCreatePost(postData: InsertPost) {
+export function useCreatePost() {
 	const queryClient = useQueryClient();
 	return useMutation({
-		mutationFn: async (): Promise<Post> => {
+		mutationFn: async (postData: InsertPost): Promise<Post> => {
 			const data = await client.api.posts.$post({ json: postData });
 			if (!data.ok) throw new Error(`Failed to create post. ${data.status}`);
 			return data.json();
@@ -36,17 +36,17 @@ export function useCreatePost(postData: InsertPost) {
 	});
 }
 
-export function useDeletePost(nanoid: string) {
+export function useDeletePost() {
 	const queryClient = useQueryClient();
 	return useMutation({
-		mutationFn: async () => {
+		mutationFn: async (nanoid: string) => {
 			const data = await client.api.posts[":nanoid"].$delete({
 				param: { nanoid },
 			});
 			if (!data.ok) throw new Error(`Failed to delete post. ${data.status}`);
 			return true;
 		},
-		onSuccess: () => {
+		onSuccess: (_data, nanoid: string) => {
 			queryClient.setQueriesData<Post[]>({ queryKey: [queryKey] }, (prev) =>
 				prev?.filter((el) => el.nanoid !== nanoid),
 			);
@@ -54,13 +54,13 @@ export function useDeletePost(nanoid: string) {
 	});
 }
 
-export function usePatchPost(postData: PatchPost, postNanoid: string) {
+export function usePatchPost() {
 	const queryClient = useQueryClient();
 	return useMutation({
-		mutationFn: async () => {
+		mutationFn: async (args: { postData: PatchPost; postNanoid: string }) => {
 			const data = await client.api.posts[":nanoid"].$patch({
-				param: { nanoid: postNanoid },
-				json: postData,
+				param: { nanoid: args.postNanoid },
+				json: args.postData,
 			});
 			if (!data.ok) throw new Error(`Failed to create post. ${data.status}`);
 			return data.json();

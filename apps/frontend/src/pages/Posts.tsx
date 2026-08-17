@@ -1,5 +1,6 @@
 import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Composer } from "@/components/posts/Composer";
 import { Post } from "@/components/posts/Post";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -35,6 +36,7 @@ export function Posts() {
 			</div>
 			<Separator />
 			<div className="flex flex-col p-4 gap-2">
+				<Composer />
 				<Post />
 				<Post />
 				<Post />
