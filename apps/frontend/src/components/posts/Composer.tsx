@@ -1,6 +1,6 @@
 import { postSchema } from "@foxfire/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeDashed, EyeOff, Lock, Send } from "lucide-react";
+import { Eye, EyeOff, Lock, Send } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
 import type z from "zod";
 import { useCreatePost } from "@/hooks/posts/queries";
@@ -70,20 +70,29 @@ export function Composer({ onSuccess }: { onSuccess: () => void }) {
 	return (
 		<form onSubmit={onSubmit}>
 			<div className="min-w-full w-full h-full min-h-40 bg-card border flex flex-col">
-				<Textarea
-					className="outline-0 border-0 bg-transparent! resize-none flex-1 min-h-0 field-sizing-fixed"
-					placeholder="Start typing..."
+				<Controller
+					name="text"
+					control={form.control}
+					render={({ field, fieldState }) => (
+						<Textarea
+							{...field}
+							aria-invalid={fieldState.invalid}
+							className="outline-0 border-0 bg-transparent! resize-none flex-1 min-h-0 field-sizing-fixed"
+							placeholder="Start typing..."
+						/>
+					)}
 				/>
 				<Separator />
 				<div className="flex flex-row items-center justify-between gap-2 px-1 py-1 bg-transparent">
 					<Controller
 						name="privacy"
 						control={form.control}
-						render={({ field, fieldState }) => (
+						render={({ field }) => (
 							<Select
+								{...field}
+								name={field.name}
 								value={field.value}
 								onValueChange={field.onChange}
-								name={field.name}
 								items={privacyLabels}
 							>
 								<SelectTrigger>

@@ -10,7 +10,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { user } from "./auth-schema";
 
-export const privacyEnum = pgEnum("privacy", ["public", "private"]);
+export const privacyEnum = pgEnum("privacy", ["public", "unlisted", "private"]);
 
 export const postsTable = pgTable("posts", {
 	id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
