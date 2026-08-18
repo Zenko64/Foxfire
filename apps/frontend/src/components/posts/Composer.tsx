@@ -76,7 +76,7 @@ export function Composer({ onComplete }: { onComplete: () => void }) {
 						<Textarea
 							{...field}
 							aria-invalid={fieldState.invalid}
-							className="outline-0 border-0 bg-transparent! resize-none flex-1 min-h-0 field-sizing-fixed"
+							className="outline-0 border-0 bg-transparent! resize-none flex-1 min-h-0 field-sizing-fixed p-4"
 							placeholder="Start typing..."
 						/>
 					)}

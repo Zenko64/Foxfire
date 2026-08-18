@@ -63,6 +63,7 @@ export async function getPost(
 			const conditions = [
 				or(
 					eq(r.privacy, "public"),
+					eq(r.privacy, "unlisted"),
 					userId ? eq(r.authorId, userId) : undefined,
 				),
 			];

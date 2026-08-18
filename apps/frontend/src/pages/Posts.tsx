@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { usePosts } from "@/hooks/posts/queries";
 import { authClient } from "@/lib/auth";
-import { account, session } from "../../../backend/src/db/auth-schema";
 import { cn } from "../lib/utils";
 
 export function Posts() {
