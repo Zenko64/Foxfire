@@ -25,7 +25,7 @@ export const authSchema = z.object({
 	username: z
 		.string()
 		.min(3, "Your username must be at least 3 characters long")
-		.max(3, "Your username must be at most 30 characters long.")
+		.max(30, "Your username must be at most 30 characters long.")
 		.regex(
 			/^[a-zA-Z0-9_.]+$/,
 			"Your username can only contain letters, numbers, underscores, and periods.",
