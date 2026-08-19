@@ -20,6 +20,22 @@ export function usePosts(params?: { query?: string; author?: string }) {
 	});
 }
 
+export function usePost(nanoid?: string) {
+	return useQuery({
+		queryKey: [queryKey, nanoid],
+		queryFn: async (): Promise<Post> => {
+			if (!nanoid)
+				throw new Error("A nanoid is required to fetch a single post.");
+			const data = await client.api.posts[":nanoid"].$get({
+				param: { nanoid },
+			});
+			if (!data.ok) throw new Error(`Failed to fetch post. ${data.status}`);
+			return data.json();
+		},
+		enabled: Boolean(nanoid),
+	});
+}
+
 export function useCreatePost() {
 	const queryClient = useQueryClient();
 	return useMutation({

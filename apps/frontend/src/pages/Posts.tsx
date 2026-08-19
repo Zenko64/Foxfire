@@ -1,23 +1,33 @@
 import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router";
 import { Composer } from "@/components/posts/Composer";
 import { PostCard } from "@/components/posts/Post";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { usePosts } from "@/hooks/posts/queries";
+import { usePost, usePosts } from "@/hooks/posts/queries";
 import { useDebounce } from "@/hooks/useDebounce";
 import { authClient } from "@/lib/auth";
 import { cn } from "../lib/utils";
 
 export function Posts() {
-	const [showComposer, setShowComposer] = useState<boolean>(false);
-	const [search, setSearch] = useState("");
-	const debouncedSearch = useDebounce(search, 300);
-	const { data: posts } = usePosts({ query: debouncedSearch || undefined });
 	const { data: session } = authClient.useSession();
+	const [searchParams] = useSearchParams();
+	// Post Data
+	const [search, setSearch] = useState(searchParams.get("search") ?? "");
+	const { data: posts } = usePosts({ query: useDebounce(search, 300) });
+	useEffect(() => {
+		searchParams.set("search", search);
+	}, [search]);
 
-	// Mobile Composer Button
+	// Shared Posts
+	const { data: sharedPost } = usePost(searchParams.get("id") ?? undefined);
+
+	// Composer
+	const [showComposer, setShowComposer] = useState<boolean>(false);
+
+	// Mobile Optimizations for the composer
 	const [showComposerTrigger, setShowComposerTrigger] = useState<boolean>(true);
 	useEffect(() => {
 		const handleScroll = () => {
@@ -58,11 +68,26 @@ export function Posts() {
 					<Separator />
 				</>
 			)}
+			{sharedPost && (
+				<>
+					<div className="flex flex-col p-4 gap-2">
+						<PostCard postData={sharedPost} />
+					</div>
+					<Separator />
+				</>
+			)}
 
 			<div className="flex flex-col p-4 gap-2">
-				{posts?.map((p) => (
-					<PostCard key={p.nanoid} postData={p} currentUid={session?.user.id} />
-				))}
+				{posts?.map(
+					(p) =>
+						p.nanoid !== sharedPost?.nanoid && (
+							<PostCard
+								key={p.nanoid}
+								postData={p}
+								currentUid={session?.user.id}
+							/>
+						),
+				)}
 			</div>
 		</div>
 	);

@@ -89,7 +89,7 @@ export async function getPost(
 		},
 		with: postRelCols,
 	});
-	if (!data) throw new NotFoundError();
+	if (!data) throw new NotFoundError("The requested post was not found.");
 	return data;
 }
 

@@ -1,4 +1,4 @@
-import { Menu, Trash, User } from "lucide-react";
+import { Menu, Share, Trash, User } from "lucide-react";
 import type { Post } from "@/hooks/posts/queries";
 import { useDeletePost } from "../../hooks/posts/queries";
 import { Button } from "../ui/button";
@@ -25,6 +25,12 @@ export function PostCard({
 			onError: () =>
 				toast.add({ title: "Failed to delete post.", type: "error" }),
 		});
+	};
+
+	const sharePost = () => {
+		const postUrl = new URL(window.location.href);
+		postUrl.searchParams.set("id", postData.nanoid);
+		navigator.clipboard.writeText(postUrl.toString());
 	};
 
 	return (
@@ -59,6 +65,11 @@ export function PostCard({
 							)}
 						/>
 						<DropdownMenuContent align="end">
+							<DropdownMenuGroup>
+								<DropdownMenuItem onClick={() => sharePost()}>
+									<Share /> Share
+								</DropdownMenuItem>
+							</DropdownMenuGroup>
 							{currentUid === postData?.author.id && (
 								<DropdownMenuGroup>
 									<DropdownMenuItem
