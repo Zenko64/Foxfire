@@ -22,7 +22,6 @@ export function Login({ onSuccess }: { onSuccess?: () => void }) {
 	const [isPending, setPending] = useState<boolean>(false);
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
-		mode: "onTouched",
 		defaultValues: { email: "", password: "" },
 	});
 

@@ -5,13 +5,20 @@ import { Button } from "../ui/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
+	DropdownMenuGroup,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Spinner } from "../ui/spinner";
 import { toast } from "../ui/toast";
 
-export function PostCard({ postData }: { postData: Post }) {
+export function PostCard({
+	postData,
+	currentUid,
+}: {
+	postData: Post;
+	currentUid?: string;
+}) {
 	const { mutate: mutDel, isPending: isPendingDel } = useDeletePost();
 	const deletePost = (nanoid: string) => {
 		mutDel(nanoid, {
@@ -52,13 +59,17 @@ export function PostCard({ postData }: { postData: Post }) {
 							)}
 						/>
 						<DropdownMenuContent align="end">
-							<DropdownMenuItem
-								variant="destructive"
-								onClick={() => deletePost(postData.nanoid)}
-							>
-								<Trash />
-								Delete
-							</DropdownMenuItem>
+							{currentUid === postData?.author.id && (
+								<DropdownMenuGroup>
+									<DropdownMenuItem
+										variant="destructive"
+										onClick={() => deletePost(postData.nanoid)}
+									>
+										<Trash />
+										Delete
+									</DropdownMenuItem>
+								</DropdownMenuGroup>
+							)}
 						</DropdownMenuContent>
 					</DropdownMenu>
 				</span>

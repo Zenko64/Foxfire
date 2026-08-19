@@ -3,6 +3,17 @@ import db from "../db";
 import { postsTable } from "../db/schema";
 import { BadRequestError, ForbiddenError, NotFoundError } from "../lib/errors";
 
+const postRelCols = {
+	author: {
+		columns: {
+			id: true,
+			username: true,
+			displayUsername: true,
+			image: true,
+		},
+	},
+} as const;
+
 /**
  * @name getPosts
  * @description Queries The Posts Table.
@@ -35,15 +46,7 @@ export async function getPosts(
 			privacy: true,
 			text: true,
 		},
-		with: {
-			author: {
-				columns: {
-					username: true,
-					displayUsername: true,
-					image: true,
-				},
-			},
-		},
+		with: postRelCols,
 	});
 }
 
@@ -84,15 +87,7 @@ export async function getPost(
 			privacy: true,
 			text: true,
 		},
-		with: {
-			author: {
-				columns: {
-					username: true,
-					displayUsername: true,
-					image: true,
-				},
-			},
-		},
+		with: postRelCols,
 	});
 	if (!data) throw new NotFoundError();
 	return data;
@@ -122,15 +117,7 @@ export async function createPost(
 				privacy: true,
 				createdAt: true,
 			},
-			with: {
-				author: {
-					columns: {
-						username: true,
-						displayUsername: true,
-						image: true,
-					},
-				},
-			},
+			with: postRelCols,
 		});
 	});
 }
@@ -167,15 +154,7 @@ export async function updatePost(
 					privacy: true,
 					createdAt: true,
 				},
-				with: {
-					author: {
-						columns: {
-							username: true,
-							displayUsername: true,
-							image: true,
-						},
-					},
-				},
+				with: postRelCols,
 			});
 		} else {
 			const verif = await tx.query.postsTable.findFirst({

@@ -3,17 +3,17 @@ import type { InferRequestType, InferResponseType } from "hono/client";
 import { client } from "@/lib/client";
 
 const queryKey = "posts";
-export type Post = InferResponseType<typeof client.api.posts.$get>[number];
+export type Post = InferResponseType<typeof client.api.posts.$get, 200>[number];
 type InsertPost = InferRequestType<typeof client.api.posts.$post>["json"];
 type PatchPost = InferRequestType<
 	(typeof client.api.posts)[":nanoid"]["$patch"]
 >["json"];
 
-export function usePosts() {
+export function usePosts(params?: { query?: string; author?: string }) {
 	return useQuery({
-		queryKey: [queryKey],
+		queryKey: [queryKey, params],
 		queryFn: async (): Promise<Post[]> => {
-			const data = await client.api.posts.$get();
+			const data = await client.api.posts.$get({ query: params ?? {} });
 			if (!data.ok) throw new Error(`Failed to fetch posts. ${data.status}`);
 			return data.json();
 		},

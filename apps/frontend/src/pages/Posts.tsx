@@ -6,12 +6,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { usePosts } from "@/hooks/posts/queries";
+import { useDebounce } from "@/hooks/useDebounce";
 import { authClient } from "@/lib/auth";
 import { cn } from "../lib/utils";
 
 export function Posts() {
 	const [showComposer, setShowComposer] = useState<boolean>(false);
-	const { data: posts } = usePosts();
+	const [search, setSearch] = useState("");
+	const debouncedSearch = useDebounce(search, 300);
+	const { data: posts } = usePosts({ query: debouncedSearch || undefined });
 	const { data: session } = authClient.useSession();
 
 	// Mobile Composer Button
@@ -28,7 +31,11 @@ export function Posts() {
 	return (
 		<div className="main-center">
 			<div className="flex flex-row justify-between items-center p-2">
-				<Input placeholder="Search posts..." className="w-full sm:w-1/3" />
+				<Input
+					placeholder="Search posts..."
+					onChange={(e) => setSearch(e.target.value)}
+					className="w-full sm:w-1/3"
+				/>
 				{session && (
 					<Button
 						className={cn(
@@ -54,7 +61,7 @@ export function Posts() {
 
 			<div className="flex flex-col p-4 gap-2">
 				{posts?.map((p) => (
-					<PostCard key={p.nanoid} postData={p} />
+					<PostCard key={p.nanoid} postData={p} currentUid={session?.user.id} />
 				))}
 			</div>
 		</div>
