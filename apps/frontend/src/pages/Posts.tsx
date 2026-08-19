@@ -13,12 +13,24 @@ import { cn } from "../lib/utils";
 
 export function Posts() {
 	const { data: session } = authClient.useSession();
-	const [searchParams] = useSearchParams();
+	const [searchParams, setSearchParams] = useSearchParams();
+
 	// Post Data
 	const [search, setSearch] = useState(searchParams.get("search") ?? "");
 	const { data: posts } = usePosts({ query: useDebounce(search, 300) });
 	useEffect(() => {
-		searchParams.set("search", search);
+		setSearchParams(
+			(param) => {
+				if (search) {
+					param.set("search", search);
+					param.delete("id");
+				} else {
+					param.delete("search");
+				}
+				return param;
+			},
+			{ replace: true },
+		);
 	}, [search]);
 
 	// Shared Posts

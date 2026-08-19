@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Layout } from "./components/Layout";
 import { Home } from "./pages/Home";
 import { Posts } from "./pages/Posts";
+import { Profile } from "./pages/Profile";
 import { ThemeProvider } from "./providers/ThemeProvider";
 
 const queryClient = new QueryClient();
@@ -21,6 +22,14 @@ const router = createBrowserRouter([
 			{
 				path: "/posts",
 				element: <Posts />,
+			},
+			{
+				path: "/user",
+				element: <Profile />,
+			},
+			{
+				path: "/user/:username",
+				element: <Profile />,
 			},
 		],
 	},
