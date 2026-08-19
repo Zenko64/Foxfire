@@ -1,0 +1,16 @@
+{
+	"name": "@foxfire/types",
+	"module": "schemas.ts",
+	"types": "schemas.ts",
+	"exports": {
+		".": "./schemas.ts"
+	},
+	"type": "module",
+	"private": true,
+	"devDependencies": {
+		"@types/bun": "latest"
+	},
+	"peerDependencies": {
+		"typescript": "^5"
+	}
+}

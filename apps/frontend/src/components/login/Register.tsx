@@ -37,7 +37,6 @@ export function Register({ onSuccess }: { onSuccess?: () => void }) {
 
 	const form = useForm<FormValues>({
 		resolver: zodResolver(formSchema),
-		mode: "onTouched",
 		defaultValues: { email: "", password: "", name: "", username: "" },
 	});
 
@@ -92,6 +91,7 @@ export function Register({ onSuccess }: { onSuccess?: () => void }) {
 							type="email"
 							placeholder="Email"
 							isInvalid={fieldState.invalid}
+							autoFocus
 						/>
 						<Button type="submit" size="icon" className="border-0 ring-inset">
 							<ArrowRight />
@@ -116,6 +116,7 @@ export function Register({ onSuccess }: { onSuccess?: () => void }) {
 							type="password"
 							placeholder="Password"
 							isInvalid={fieldState.invalid}
+							autoFocus
 						/>
 						<Button type="submit" size="icon" className="border-0 ring-inset">
 							<ArrowRight />
@@ -140,6 +141,7 @@ export function Register({ onSuccess }: { onSuccess?: () => void }) {
 							type="text"
 							placeholder="Full Name"
 							isInvalid={fieldState.invalid}
+							autoFocus
 						/>
 						{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
 					</Field>

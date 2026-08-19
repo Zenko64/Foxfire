@@ -1,4 +1,4 @@
-import { HomeIcon, KeyIcon, LogOut, Mail, UserIcon } from "lucide-react";
+import { HomeIcon, KeyIcon, LogOut, Mail, User, UserIcon } from "lucide-react";
 import "@/assets/css/navbar.css";
 import { useState } from "react";
 import { useNavigate } from "react-router";
@@ -9,6 +9,7 @@ import { Dialog, DialogTrigger } from "./ui/dialog";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
+	DropdownMenuGroup,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
@@ -58,7 +59,6 @@ export function Navbar() {
 										variant="ghost"
 										size="icon"
 										className="h-full w-auto aspect-square group"
-										onClick={() => nav("/")}
 									>
 										<KeyIcon className="size-7.5 group-active:scale-95 group-hover:text-primary transition-all" />
 									</Button>
@@ -74,7 +74,6 @@ export function Navbar() {
 									variant="ghost"
 									size="icon"
 									className="h-full w-auto aspect-square group"
-									onClick={() => nav("/")}
 								>
 									{session.user.image ? (
 										<img
@@ -89,13 +88,21 @@ export function Navbar() {
 						/>
 					)}
 					<DropdownMenuContent align="end" sideOffset={4} alignOffset={3}>
-						<DropdownMenuItem
-							variant="destructive"
-							onClick={() => authClient.signOut()}
-						>
-							<LogOut />
-							Logout
-						</DropdownMenuItem>
+						<DropdownMenuGroup>
+							<DropdownMenuItem onClick={() => nav("/user", {})}>
+								<User />
+								Profile
+							</DropdownMenuItem>
+						</DropdownMenuGroup>
+						<DropdownMenuGroup>
+							<DropdownMenuItem
+								variant="destructive"
+								onClick={() => authClient.signOut()}
+							>
+								<LogOut />
+								Logout
+							</DropdownMenuItem>
+						</DropdownMenuGroup>
 					</DropdownMenuContent>
 				</DropdownMenu>
 			</span>
