@@ -2,7 +2,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { InferRequestType, InferResponseType } from "hono/client";
 import { client } from "@/lib/client";
 
-const queryKey = "posts";
 export type Post = InferResponseType<typeof client.api.posts.$get, 200>[number];
 type InsertPost = InferRequestType<typeof client.api.posts.$post>["json"];
 type PatchPost = InferRequestType<
@@ -11,7 +10,7 @@ type PatchPost = InferRequestType<
 
 export function usePosts(params?: { query?: string; author?: string }) {
 	return useQuery({
-		queryKey: [queryKey, params],
+		queryKey: ["posts", params],
 		queryFn: async (): Promise<Post[]> => {
 			const data = await client.api.posts.$get({ query: params ?? {} });
 			if (!data.ok) throw new Error(`Failed to fetch posts. ${data.status}`);
@@ -22,7 +21,7 @@ export function usePosts(params?: { query?: string; author?: string }) {
 
 export function usePost(nanoid?: string) {
 	return useQuery({
-		queryKey: [queryKey, nanoid],
+		queryKey: ["post", nanoid],
 		queryFn: async (): Promise<Post> => {
 			if (!nanoid)
 				throw new Error("A nanoid is required to fetch a single post.");
@@ -45,7 +44,7 @@ export function useCreatePost() {
 			return data.json();
 		},
 		onSuccess: (newData: Post) => {
-			queryClient.setQueriesData<Post[]>({ queryKey: [queryKey] }, (prev) =>
+			queryClient.setQueriesData<Post[]>({ queryKey: ["posts"] }, (prev) =>
 				prev ? [newData, ...prev] : [newData],
 			);
 		},
@@ -63,7 +62,7 @@ export function useDeletePost() {
 			return true;
 		},
 		onSuccess: (_data, nanoid: string) => {
-			queryClient.setQueriesData<Post[]>({ queryKey: [queryKey] }, (prev) =>
+			queryClient.setQueriesData<Post[]>({ queryKey: ["posts"] }, (prev) =>
 				prev?.filter((el) => el.nanoid !== nanoid),
 			);
 		},
@@ -83,7 +82,7 @@ export function usePatchPost() {
 		},
 		onSuccess: (updatedPost: Post) => {
 			queryClient.setQueriesData<Post[]>(
-				{ queryKey: [queryKey] },
+				{ queryKey: ["posts"] },
 				(prev) =>
 					prev?.map((p) =>
 						p.nanoid === updatedPost.nanoid ? updatedPost : p,
