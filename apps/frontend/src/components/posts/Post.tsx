@@ -1,4 +1,5 @@
 import { Menu, Share, Trash, User } from "lucide-react";
+import { useNavigate } from "react-router";
 import type { Post } from "@/hooks/posts/queries";
 import { useDeletePost } from "../../hooks/posts/queries";
 import { Button } from "../ui/button";
@@ -32,6 +33,7 @@ export function PostCard({
 		postUrl.searchParams.set("id", postData.nanoid);
 		navigator.clipboard.writeText(postUrl.toString());
 	};
+	const nav = useNavigate();
 
 	return (
 		<div className="relative min-w-full w-full h-full min-h-40 bg-card border flex flex-col">
@@ -45,14 +47,18 @@ export function PostCard({
 			</div>
 
 			<div className="flex flex-row items-center border-t justify-between gap-2 px-2 py-2 bg-transparent">
-				<span className="flex flex-row justify-center items-center gap-1">
+				<Button
+					variant="ghost"
+					className="flex flex-row justify-center items-center gap-1"
+					onClick={() => nav(`/user/${postData.author.username}`)}
+				>
 					{postData.author.image ? (
 						<img alt="Avatar" src={postData.author.image} />
 					) : (
 						<User />
 					)}
 					<p>{postData.author.displayUsername}</p>
-				</span>
+				</Button>
 
 				<span className="flex flex-row justify-center items-center gap-1">
 					<p className="text-muted">{}</p>

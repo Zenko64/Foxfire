@@ -8,7 +8,10 @@ type PatchPost = InferRequestType<
 	(typeof client.api.posts)[":nanoid"]["$patch"]
 >["json"];
 
-export function usePosts(params?: { query?: string; author?: string }) {
+export function usePosts(
+	params?: { query?: string; author?: string },
+	options: { enabled: boolean } = { enabled: true },
+) {
 	return useQuery({
 		queryKey: ["posts", params],
 		queryFn: async (): Promise<Post[]> => {
@@ -16,6 +19,7 @@ export function usePosts(params?: { query?: string; author?: string }) {
 			if (!data.ok) throw new Error(`Failed to fetch posts. ${data.status}`);
 			return data.json();
 		},
+		enabled: options.enabled,
 	});
 }
 

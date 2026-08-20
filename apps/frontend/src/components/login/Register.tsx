@@ -12,7 +12,6 @@ import { toast } from "../ui/toast";
 import { Input } from "./ui";
 
 const formSchema = authSchema.omit({ displayUsername: true });
-
 type FormValues = z.infer<typeof formSchema>;
 
 export function Register({ onSuccess }: { onSuccess?: () => void }) {

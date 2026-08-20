@@ -1,22 +1,22 @@
 import { User } from "lucide-react";
-import { useState } from "react";
 import { useParams } from "react-router";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { PostCard } from "@/components/posts/Post";
+import { Separator } from "@/components/ui/separator";
+import { usePosts } from "@/hooks/posts/queries";
 import { useUser } from "@/hooks/users/queries";
 import { authClient } from "@/lib/auth";
-import { EditableField } from "../components/ui/editable-field";
 
 export function Profile() {
-	const { user: usernameParam } = useParams();
+	// Account data
+	const { username: usernameParam } = useParams();
 	const { data: session } = authClient.useSession();
+	const { data } = useUser(usernameParam ?? session?.user.username ?? "");
+	// const isOwner = data?.username === session?.user.username
 
-	const [isModifying, setIsModifying] = useState<
-		"avatar" | "displayName" | "username" | null
-	>(null);
-
-	const { data } = useUser(
-		usernameParam ?? (session && session?.user.username) ?? "",
+	// Account content
+	const { data: posts } = usePosts(
+		{ author: data?.username ?? undefined },
+		{ enabled: Boolean(data?.username) ?? false },
 	);
 
 	return (
@@ -28,12 +28,15 @@ export function Profile() {
 					<User className=" border p-4 size-20" />
 				)}
 				<div className="flex flex-col items-start justify-start pl-4">
-					<EditableField
-						value={data?.displayUsername ?? ""}
-						onSave={(v) => authClient.updateUser({ displayUsername: v })}
-					/>
-					<h3>{data?.username}</h3>
+					<p className="text-xl">{data?.displayUsername}</p>
+					<p className="text-xs text-muted-foreground">@{data?.username}</p>
 				</div>
+			</div>
+			<Separator />
+			<div className="flex flex-col p-4 gap-2">
+				{posts?.map((p) => (
+					<PostCard key={p.nanoid} postData={p} currentUid={session?.user.id} />
+				))}
 			</div>
 		</div>
 	);

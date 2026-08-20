@@ -40,7 +40,7 @@ export function EditableField({
 		/>
 	) : (
 		<Button
-			variant="ghost"
+			variant="link"
 			onClick={() => {
 				setIsEditing(true);
 			}}
