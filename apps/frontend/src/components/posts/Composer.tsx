@@ -4,6 +4,7 @@ import { Eye, EyeOff, Lock, Send, X } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
 import type z from "zod";
 import { useCreatePost } from "@/hooks/posts/queries";
+import { privacyLabels } from "../constants/Privacy";
 import { Button } from "../ui/button";
 import {
 	Select,
@@ -17,33 +18,6 @@ import { Separator } from "../ui/separator";
 import { Spinner } from "../ui/spinner";
 import { Textarea } from "../ui/textarea";
 import { toast } from "../ui/toast";
-
-export const privacyLabels = [
-	{
-		label: (
-			<>
-				<Lock className="size-4" /> Private
-			</>
-		),
-		value: "private",
-	},
-	{
-		label: (
-			<>
-				<EyeOff className="size-4" /> Unlisted
-			</>
-		),
-		value: "unlisted",
-	},
-	{
-		label: (
-			<>
-				<Eye className="size-4" /> Public
-			</>
-		),
-		value: "public",
-	},
-];
 
 export function Composer({ onComplete }: { onComplete: () => void }) {
 	const { status, mutate } = useCreatePost();

@@ -33,8 +33,12 @@ export function Posts() {
 		);
 	}, [search]);
 
+	const sharedPostId = searchParams.get("id");
+
 	// Shared Posts
-	const { data: sharedPost } = usePost(searchParams.get("id") ?? undefined);
+	const { data: sharedPost } = usePost(sharedPostId ?? "", {
+		enabled: sharedPostId !== null,
+	});
 
 	// Composer
 	const [showComposer, setShowComposer] = useState<boolean>(false);

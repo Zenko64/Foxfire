@@ -15,8 +15,8 @@ export function Profile() {
 
 	// Account content
 	const { data: posts } = usePosts(
-		{ author: data?.username ?? undefined },
-		{ enabled: Boolean(data?.username) ?? false },
+		{ author: data?.username ?? "" },
+		{ enabled: Boolean(data?.username) },
 	);
 
 	return (
@@ -38,7 +38,6 @@ export function Profile() {
 					?.toSorted((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0))
 					.map((p) => (
 						<PostCard
-							showPin={p.pinned}
 							key={p.nanoid}
 							postData={p}
 							currentUid={session?.user.id}

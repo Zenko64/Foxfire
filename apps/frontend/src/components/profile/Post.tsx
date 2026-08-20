@@ -26,6 +26,7 @@ export function PostCard({
 }: {
 	postData: Post;
 	currentUid?: string;
+	showPin: boolean;
 }) {
 	const { mutate: mutDel, isPending: isPendingDel } = useDeletePost();
 
