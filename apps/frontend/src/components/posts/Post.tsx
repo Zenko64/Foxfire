@@ -1,3 +1,6 @@
+import dayjs from "dayjs";
+import isToday from "dayjs/plugin/isToday";
+import relativeTime from "dayjs/plugin/relativeTime";
 import { Menu, Share, Trash, User } from "lucide-react";
 import { useNavigate } from "react-router";
 import type { Post } from "@/hooks/posts/queries";
@@ -12,6 +15,10 @@ import {
 } from "../ui/dropdown-menu";
 import { Spinner } from "../ui/spinner";
 import { toast } from "../ui/toast";
+import { privacyLabels } from "./Composer";
+
+dayjs.extend(relativeTime);
+dayjs.extend(isToday);
 
 export function PostCard({
 	postData,
@@ -29,7 +36,8 @@ export function PostCard({
 	};
 
 	const sharePost = () => {
-		const postUrl = new URL(window.location.href);
+		const postUrl = new URL(window.location.origin);
+		postUrl.pathname = "/posts";
 		postUrl.searchParams.set("id", postData.nanoid);
 		navigator.clipboard.writeText(postUrl.toString());
 	};
@@ -47,21 +55,32 @@ export function PostCard({
 			</div>
 
 			<div className="flex flex-row items-center border-t justify-between gap-2 px-2 py-2 bg-transparent">
-				<Button
-					variant="ghost"
-					className="flex flex-row justify-center items-center gap-1"
-					onClick={() => nav(`/user/${postData.author.username}`)}
-				>
-					{postData.author.image ? (
-						<img alt="Avatar" src={postData.author.image} />
-					) : (
-						<User />
+				<span className="flex flex-row justify-center items-center gap-2">
+					<Button
+						variant="ghost"
+						className="flex flex-row justify-center items-center gap-1 p-1"
+						onClick={() => nav(`/user/${postData.author.username}`)}
+					>
+						{postData.author.image ? (
+							<img alt="Avatar" src={postData.author.image} />
+						) : (
+							<User />
+						)}
+						<p>{postData.author.displayUsername}</p>
+					</Button>
+					{(postData.author.id === currentUid ||
+						postData.privacy === "unlisted") && (
+						<p className="flex flex-row gap-1 text-xs text-muted items-center">
+							{privacyLabels.find((pl) => pl.value === postData.privacy)?.label}
+						</p>
 					)}
-					<p>{postData.author.displayUsername}</p>
-				</Button>
-
-				<span className="flex flex-row justify-center items-center gap-1">
-					<p className="text-muted">{}</p>
+				</span>
+				<span className="flex flex-row justify-center items-center gap-4">
+					<p className="flex flex-row gap-1 text-xs text-muted-foreground items-center">
+						{dayjs(postData.createdAt).isToday()
+							? dayjs(postData.createdAt).fromNow()
+							: dayjs(postData.createdAt).toDate().toLocaleDateString()}
+					</p>
 					<DropdownMenu>
 						<DropdownMenuTrigger
 							render={(props) => (
@@ -76,7 +95,7 @@ export function PostCard({
 									<Share /> Share
 								</DropdownMenuItem>
 							</DropdownMenuGroup>
-							{currentUid === postData?.author.id && (
+							{currentUid === postData.author.id && (
 								<DropdownMenuGroup>
 									<DropdownMenuItem
 										variant="destructive"

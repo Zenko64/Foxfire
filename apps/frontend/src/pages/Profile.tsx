@@ -34,9 +34,15 @@ export function Profile() {
 			</div>
 			<Separator />
 			<div className="flex flex-col p-4 gap-2">
-				{posts?.map((p) => (
-					<PostCard key={p.nanoid} postData={p} currentUid={session?.user.id} />
-				))}
+				{posts
+					?.sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0))
+					.map((p) => (
+						<PostCard
+							key={p.nanoid}
+							postData={p}
+							currentUid={session?.user.id}
+						/>
+					))}
 			</div>
 		</div>
 	);

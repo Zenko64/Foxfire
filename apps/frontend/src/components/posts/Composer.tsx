@@ -18,11 +18,11 @@ import { Spinner } from "../ui/spinner";
 import { Textarea } from "../ui/textarea";
 import { toast } from "../ui/toast";
 
-const privacyLabels = [
+export const privacyLabels = [
 	{
 		label: (
 			<>
-				<Lock /> Private
+				<Lock className="size-4" /> Private
 			</>
 		),
 		value: "private",
@@ -30,7 +30,7 @@ const privacyLabels = [
 	{
 		label: (
 			<>
-				<EyeOff /> Unlisted
+				<EyeOff className="size-4" /> Unlisted
 			</>
 		),
 		value: "unlisted",
@@ -38,7 +38,7 @@ const privacyLabels = [
 	{
 		label: (
 			<>
-				<Eye /> Public
+				<Eye className="size-4" /> Public
 			</>
 		),
 		value: "public",
