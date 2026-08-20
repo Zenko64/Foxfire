@@ -26,7 +26,6 @@ export function PostCard({
 }: {
 	postData: Post;
 	currentUid?: string;
-	showPin: boolean;
 }) {
 	const { mutate: mutDel, isPending: isPendingDel } = useDeletePost();
 
@@ -39,7 +38,7 @@ export function PostCard({
 
 	const sharePost = () => {
 		const postUrl = new URL(window.location.origin);
-		postUrl.pathname = "/posts";
+		postUrl.pathname = `/user/${postData.author.username}`;
 		postUrl.searchParams.set("id", postData.nanoid);
 		navigator.clipboard.writeText(postUrl.toString());
 	};

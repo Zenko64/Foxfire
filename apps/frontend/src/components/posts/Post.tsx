@@ -72,7 +72,11 @@ export function PostCard({
 					{(postData.author.id === currentUid ||
 						postData.privacy === "unlisted") && (
 						<p className="flex flex-row gap-1 text-xs text-muted items-center">
-							{privacyLabels.find((pl) => pl.value === postData.privacy)?.label}
+							{
+								privacyLabels
+									.filter((f) => !(f.value === "public"))
+									.find((pl) => pl.value === postData.privacy)?.label
+							}
 						</p>
 					)}
 				</span>

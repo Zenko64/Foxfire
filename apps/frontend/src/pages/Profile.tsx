@@ -1,8 +1,9 @@
 import { User } from "lucide-react";
-import { useParams } from "react-router";
-import { PostCard } from "@/components/posts/Post";
+import { useEffect } from "react";
+import { useParams, useSearchParams } from "react-router";
+import { PostCard } from "@/components/profile/Post";
 import { Separator } from "@/components/ui/separator";
-import { usePosts } from "@/hooks/posts/queries";
+import { usePost, usePosts } from "@/hooks/posts/queries";
 import { useUser } from "@/hooks/users/queries";
 import { authClient } from "@/lib/auth";
 
@@ -11,13 +12,21 @@ export function Profile() {
 	const { username: usernameParam } = useParams();
 	const { data: session } = authClient.useSession();
 	const { data } = useUser(usernameParam ?? session?.user.username ?? "");
-	// const isOwner = data?.username === session?.user.username
+	const isOwner = data?.username === session?.user.username;
 
 	// Account content
 	const { data: posts } = usePosts(
 		{ author: data?.username ?? "" },
 		{ enabled: Boolean(data?.username) },
 	);
+
+	const [searchParams] = useSearchParams();
+	const sharedPostId = searchParams.get("id");
+
+	// Shared Posts
+	const { data: sharedPost } = usePost(sharedPostId ?? "", {
+		enabled: sharedPostId !== null,
+	});
 
 	return (
 		<div className="main-center flex flex-col">
@@ -33,9 +42,18 @@ export function Profile() {
 				</div>
 			</div>
 			<Separator />
+			{sharedPost && (
+				<>
+					<div className="flex flex-col p-4 gap-2">
+						<PostCard postData={sharedPost} currentUid={session?.user.id} />
+					</div>
+					<Separator />
+				</>
+			)}
 			<div className="flex flex-col p-4 gap-2">
 				{posts
 					?.toSorted((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0))
+					.filter((p) => p.nanoid !== sharedPost?.nanoid)
 					.map((p) => (
 						<PostCard
 							key={p.nanoid}

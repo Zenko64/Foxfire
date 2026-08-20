@@ -87,23 +87,22 @@ export function Posts() {
 			{sharedPost && (
 				<>
 					<div className="flex flex-col p-4 gap-2">
-						<PostCard postData={sharedPost} />
+						<PostCard postData={sharedPost} currentUid={session?.user.id} />
 					</div>
 					<Separator />
 				</>
 			)}
 
 			<div className="flex flex-col p-4 gap-2">
-				{posts?.map(
-					(p) =>
-						p.nanoid !== sharedPost?.nanoid && (
-							<PostCard
-								key={p.nanoid}
-								postData={p}
-								currentUid={session?.user.id}
-							/>
-						),
-				)}
+				{posts
+					?.filter((p) => p.nanoid !== sharedPost?.nanoid)
+					.map((p) => (
+						<PostCard
+							key={p.nanoid}
+							postData={p}
+							currentUid={session?.user.id}
+						/>
+					))}
 			</div>
 		</div>
 	);
