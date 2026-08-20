@@ -50,7 +50,7 @@ export function Posts() {
 					<Button
 						className={cn(
 							"hover:cursor-pointer fixed bottom-4 right-4 flex items-center justify-center sm:static sm:gap-2 max-sm:size-14",
-							!showComposerTrigger || (showComposer && "hidden"),
+							(!showComposerTrigger || showComposer) && "hidden",
 						)}
 						onClick={() => setShowComposer(true)}
 					>

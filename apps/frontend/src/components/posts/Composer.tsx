@@ -124,6 +124,7 @@ export function Composer({ onComplete }: { onComplete: () => void }) {
 							</Select>
 						)}
 					/>
+
 					<span className="flex flex-row items-center justify-center gap-1">
 						<Button
 							type="button"
@@ -133,7 +134,10 @@ export function Composer({ onComplete }: { onComplete: () => void }) {
 							<X />
 							Cancel
 						</Button>
-						<Button type="submit">
+						<Button
+							type="submit"
+							disabled={!form.watch("text")?.trim() || status === "pending"}
+						>
 							{status === "pending" ? (
 								<>
 									<Spinner /> Posting
