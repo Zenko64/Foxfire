@@ -45,14 +45,15 @@ export function PostCard({
 	const nav = useNavigate();
 
 	return (
-		<div className="relative min-w-full w-full h-full min-h-40 bg-card border flex flex-col">
-			<div className="relative flex-1 flex flex-col min-h-0">
-				{isPendingDel && (
-					<div className="absolute bg-neutral-800/2 backdrop-blur-sm h-full w-full flex flex-row gap-2 justify-center items-center">
+		<div className=" min-w-full w-full h-full min-h-40 bg-card border flex flex-col">
+			<div className="flex-1 flex flex-col min-h-0">
+				{isPendingDel ? (
+					<div className="bg-neutral-800/2 backdrop-blur-sm h-full w-full flex flex-1 flex-row gap-2 justify-center items-center">
 						<Spinner /> Deleting...
 					</div>
+				) : (
+					<div className="flex-1 p-4">{postData.text}</div>
 				)}
-				<div className="flex-1 p-4">{postData.text}</div>
 			</div>
 
 			<div className="flex flex-row items-center border-t justify-between gap-2 px-2 py-2 bg-transparent">

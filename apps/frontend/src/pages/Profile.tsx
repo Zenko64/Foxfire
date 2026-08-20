@@ -1,7 +1,6 @@
 import { User } from "lucide-react";
-import { useEffect } from "react";
 import { useParams, useSearchParams } from "react-router";
-import { PostCard } from "@/components/profile/Post";
+import { PostCard } from "@/components/posts/Post";
 import { Separator } from "@/components/ui/separator";
 import { usePost, usePosts } from "@/hooks/posts/queries";
 import { useUser } from "@/hooks/users/queries";
@@ -12,7 +11,6 @@ export function Profile() {
 	const { username: usernameParam } = useParams();
 	const { data: session } = authClient.useSession();
 	const { data } = useUser(usernameParam ?? session?.user.username ?? "");
-	const isOwner = data?.username === session?.user.username;
 
 	// Account content
 	const { data: posts } = usePosts(
