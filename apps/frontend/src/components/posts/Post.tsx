@@ -1,10 +1,10 @@
 import dayjs from "dayjs";
 import isToday from "dayjs/plugin/isToday";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { Menu, Share, Trash, User } from "lucide-react";
+import { Menu, PinIcon, PinOffIcon, Share, Trash, User } from "lucide-react";
 import { useNavigate } from "react-router";
 import type { Post } from "@/hooks/posts/queries";
-import { useDeletePost } from "../../hooks/posts/queries";
+import { useDeletePost, usePatchPost } from "../../hooks/posts/queries";
 import { Button } from "../ui/button";
 import {
 	DropdownMenu,
@@ -23,11 +23,14 @@ dayjs.extend(isToday);
 export function PostCard({
 	postData,
 	currentUid,
+	showPin,
 }: {
 	postData: Post;
 	currentUid?: string;
+	showPin: boolean;
 }) {
 	const { mutate: mutDel, isPending: isPendingDel } = useDeletePost();
+	const { mutate: mutPost, isPending: isPendingMut } = usePatchPost();
 	const deletePost = (nanoid: string) => {
 		mutDel(nanoid, {
 			onError: () =>
@@ -74,6 +77,11 @@ export function PostCard({
 							{privacyLabels.find((pl) => pl.value === postData.privacy)?.label}
 						</p>
 					)}
+					{showPin && (
+						<p className="flex flex-row gap-1 text-xs text-muted items-center">
+							<PinIcon /> Pinned
+						</p>
+					)}
 				</span>
 				<span className="flex flex-row justify-center items-center gap-4">
 					<p className="flex flex-row gap-1 text-xs text-muted-foreground items-center">
@@ -97,6 +105,24 @@ export function PostCard({
 							</DropdownMenuGroup>
 							{currentUid === postData.author.id && (
 								<DropdownMenuGroup>
+									<DropdownMenuItem
+										onClick={() =>
+											mutPost({
+												postData: { pinned: !postData.pinned },
+												postNanoid: postData.nanoid,
+											})
+										}
+									>
+										{postData.pinned ? (
+											<>
+												<PinOffIcon /> Unpin
+											</>
+										) : (
+											<>
+												<PinIcon /> Pin
+											</>
+										)}
+									</DropdownMenuItem>
 									<DropdownMenuItem
 										variant="destructive"
 										onClick={() => deletePost(postData.nanoid)}
