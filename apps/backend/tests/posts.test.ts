@@ -58,6 +58,8 @@ describe("Posting Module", () => {
 			nanoid,
 		});
 		await handler.deletePost({ nanoid: post!.nanoid }, mockUser.user!.id);
-		expect(handler.getPost({ nanoid: post!.nanoid })).toThrow(NotFoundError);
+		expect(handler.getPost({ nanoid: post!.nanoid })).rejects.toThrow(
+			NotFoundError,
+		);
 	});
 });
