@@ -1,7 +1,7 @@
 import type { Context } from "hono";
 import type { ContentfulStatusCode } from "hono/utils/http-status";
 import { AppError } from "../../lib/errors";
-import logger from "../logging";
+import logger from "../logger";
 
 export function errorHandler(err: unknown, c: Context): Response {
 	if (err instanceof AppError) {
