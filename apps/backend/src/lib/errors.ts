@@ -1,4 +1,11 @@
-export class NotFoundError extends Error {
+export abstract class AppError extends Error {
+	abstract override name: string;
+	abstract readonly http: {
+		status: number;
+	};
+}
+
+export class NotFoundError extends AppError {
 	override name: string = "NotFoundError";
 	readonly http = {
 		status: 404,
@@ -8,7 +15,7 @@ export class NotFoundError extends Error {
 	}
 }
 
-export class BadRequestError extends Error {
+export class BadRequestError extends AppError {
 	override name: string = "BadRequestError";
 	readonly http = {
 		status: 400,
@@ -18,7 +25,7 @@ export class BadRequestError extends Error {
 	}
 }
 
-export class ForbiddenError extends Error {
+export class ForbiddenError extends AppError {
 	override name: string = "ForbiddenError";
 	readonly http = {
 		status: 403,
@@ -30,7 +37,7 @@ export class ForbiddenError extends Error {
 	}
 }
 
-export class UnauthorizedError extends Error {
+export class UnauthorizedError extends AppError {
 	override name: string = "UnauthorizedError";
 	readonly http = {
 		status: 401,
@@ -40,7 +47,7 @@ export class UnauthorizedError extends Error {
 	}
 }
 
-export class InternalError extends Error {
+export class InternalError extends AppError {
 	override name: string = "InternalError";
 	readonly http = {
 		status: 500,
