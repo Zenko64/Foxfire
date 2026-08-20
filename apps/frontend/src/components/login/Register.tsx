@@ -57,6 +57,7 @@ export function Register({ onSuccess }: { onSuccess?: () => void }) {
 						description: "Please try again.",
 					});
 			}
+			return;
 		}
 		onSuccess?.();
 	}

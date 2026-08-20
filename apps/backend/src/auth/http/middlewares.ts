@@ -3,6 +3,10 @@ import type { AppEnv } from "../../core/http/factory";
 import { auth } from "../../lib/auth";
 import { UnauthorizedError } from "../../lib/errors";
 
+/**
+ * Enforce Authentication
+ * Attach auth context first.
+ */
 export const requireAuth = createMiddleware<
 	AppEnv & {
 		Variables: {
@@ -15,6 +19,10 @@ export const requireAuth = createMiddleware<
 	return next();
 });
 
+/**
+ * Attach auth context.
+ * It doesn't enforce auth.
+ */
 export const attachAuth = createMiddleware(async (c, next) => {
 	const session = await auth.api.getSession({
 		headers: c.req.raw.headers,
