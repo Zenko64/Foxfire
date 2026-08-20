@@ -6,7 +6,11 @@ const privacy = z.enum(
 );
 
 export const postSchema = z.object({
-	text: z.string().min(1, "The post should not be empty.").trim(),
+	text: z
+		.string()
+		.min(1, "The post should not be empty.")
+		.max(4000, "Your post can only contain up to 4000 characters.")
+		.trim(),
 	pinned: z.boolean(),
 	privacy: privacy,
 });
