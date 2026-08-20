@@ -58,6 +58,7 @@ export function Posts() {
 		<div className="main-center">
 			<div className="flex flex-row justify-between items-center p-2">
 				<Input
+					value={search}
 					placeholder="Search posts..."
 					onChange={(e) => setSearch(e.target.value)}
 					className="w-full sm:w-1/3"

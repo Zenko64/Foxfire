@@ -27,6 +27,7 @@ export function PostCard({
 	postData: Post;
 	currentUid?: string;
 }) {
+	const nav = useNavigate();
 	const { mutate: mutDel, isPending: isPendingDel } = useDeletePost();
 
 	const deletePost = (nanoid: string) => {
@@ -42,7 +43,6 @@ export function PostCard({
 		postUrl.searchParams.set("id", postData.nanoid);
 		navigator.clipboard.writeText(postUrl.toString());
 	};
-	const nav = useNavigate();
 
 	return (
 		<div className=" min-w-full w-full h-full min-h-40 bg-card border flex flex-col">
@@ -64,7 +64,11 @@ export function PostCard({
 						onClick={() => nav(`/user/${postData.author.username}`)}
 					>
 						{postData.author.image ? (
-							<img alt="Avatar" src={postData.author.image} />
+							<img
+								alt="Avatar"
+								className="size-32"
+								src={postData.author.image}
+							/>
 						) : (
 							<User />
 						)}

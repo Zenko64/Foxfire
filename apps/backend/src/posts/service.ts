@@ -1,7 +1,12 @@
 import { and, eq, ilike, or } from "drizzle-orm";
 import db from "../db";
 import { postsTable } from "../db/schema";
-import { BadRequestError, ForbiddenError, NotFoundError } from "../lib/errors";
+import {
+	BadRequestError,
+	ForbiddenError,
+	InternalError,
+	NotFoundError,
+} from "../lib/errors";
 
 const postRelCols = {
 	author: {
@@ -106,9 +111,11 @@ export async function createPost(
 			.returning({ id: postsTable.id });
 
 		if (!newPost)
-			throw new Error("An unknown error has occurred while creating a post.");
+			throw new InternalError(
+				"An unknown error has occurred while creating a post.",
+			);
 
-		return tx.query.postsTable.findFirst({
+		const result = await tx.query.postsTable.findFirst({
 			where: (p) => eq(p.id, newPost.id),
 			columns: {
 				nanoid: true,
@@ -119,6 +126,12 @@ export async function createPost(
 			},
 			with: postRelCols,
 		});
+
+		if (!result)
+			throw new InternalError(
+				"An unknown error has occured while retrieving the created post.",
+			);
+		return result;
 	});
 }
 
@@ -144,19 +157,8 @@ export async function updatePost(
 			.where(and(...conditions, eq(postsTable.authorId, userId)))
 			.returning({ id: postsTable.id });
 
-		if (result) {
-			return tx.query.postsTable.findFirst({
-				where: (p) => eq(p.id, result.id),
-				columns: {
-					nanoid: true,
-					text: true,
-					pinned: true,
-					privacy: true,
-					createdAt: true,
-				},
-				with: postRelCols,
-			});
-		} else {
+		if (!result) {
+			// This branch finds the cause of the error
 			const verif = await tx.query.postsTable.findFirst({
 				where: and(...conditions),
 				columns: {
@@ -167,11 +169,33 @@ export async function updatePost(
 
 			if (!verif || (verif.authorId !== userId && verif.privacy === "private"))
 				throw new NotFoundError("The specified post was not found.");
-			else if (verif.authorId !== userId)
+			if (verif.authorId !== userId)
 				throw new ForbiddenError(
 					"You don't have permission to edit this post.",
 				);
+			throw new InternalError(
+				"An unknown error has occurred while updating the post.",
+			);
 		}
+
+		const updated = await tx.query.postsTable.findFirst({
+			where: (p) => eq(p.id, result.id),
+			columns: {
+				nanoid: true,
+				text: true,
+				pinned: true,
+				privacy: true,
+				createdAt: true,
+			},
+			with: postRelCols,
+		});
+
+		if (!updated)
+			throw new InternalError(
+				"An unknown error has occurred while retrieving the updated post.",
+			);
+
+		return updated;
 	});
 }
 
@@ -206,5 +230,12 @@ export async function deletePost(
 			throw new ForbiddenError(
 				"You don't have permission to delete this post.",
 			);
+		else {
+			throw new InternalError(
+				"An unknown error has occurred while deleting the post.",
+			);
+		}
 	}
+
+	return result;
 }
