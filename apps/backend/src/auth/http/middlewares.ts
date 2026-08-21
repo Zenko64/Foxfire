@@ -1,5 +1,5 @@
 /**
- * @file middlewares.ts
+ * @file auth/http/middlewares.ts
  * @name middlewares
  * @module auth/http/middlewares
  * @description This file provides middlewares to allow routes to interact with session and user auth data.

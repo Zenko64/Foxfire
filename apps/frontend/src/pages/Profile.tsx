@@ -1,10 +1,16 @@
-import { Edit, User } from "lucide-react";
+import { Edit, Ghost, User } from "lucide-react";
 import { useParams, useSearchParams } from "react-router";
 import { PostCard } from "@/components/posts/Post";
 import { ProfileEditDialog } from "@/components/profile/ProfileEditor";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { Empty } from "@/components/ui/empty";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import {
+	Empty,
+	EmptyDescription,
+	EmptyHeader,
+	EmptyMedia,
+	EmptyTitle,
+} from "@/components/ui/empty";
 import { Separator } from "@/components/ui/separator";
 import { usePost, usePosts } from "@/hooks/posts/queries";
 import { useUser } from "@/hooks/users/queries";
@@ -18,7 +24,7 @@ export function Profile() {
 	const { data: session } = authClient.useSession();
 
 	const profileUsername = usernameParam ?? session?.user.username;
-	const { data, isError } = useUser(profileUsername ?? "", {
+	const { data, error } = useUser(profileUsername ?? "", {
 		enabled: Boolean(profileUsername),
 	});
 
@@ -36,8 +42,22 @@ export function Profile() {
 
 	const isOwner = session?.user.username === data?.username;
 
-	if (!data || isError) {
-		return <Empty></Empty>;
+	if (!data || error?.status === 404) {
+		return (
+			<div className="items-center justify-center flex flex-1 flex-col">
+				<Empty>
+					<EmptyHeader>
+						<EmptyMedia>
+							<Ghost />
+						</EmptyMedia>
+						<EmptyTitle>404</EmptyTitle>
+						<EmptyDescription>
+							The requested user wasn't found.
+						</EmptyDescription>
+					</EmptyHeader>
+				</Empty>
+			</div>
+		);
 	}
 
 	return (

@@ -9,7 +9,7 @@ export type User = InferResponseType<
 
 export function useUser(
 	username: string,
-	options?: Partial<UseQueryOptions<User>>,
+	options?: Partial<UseQueryOptions<User, ApiError>>,
 ) {
 	return useQuery({
 		queryKey: ["user", username],
