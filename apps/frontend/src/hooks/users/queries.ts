@@ -17,7 +17,7 @@ export function useUser(
 			const data = await client.api.auth.user[":username"].$get({
 				param: { username },
 			});
-			if (!data.ok) throw new ApiError("Failed to fetch uaser.", data.status);
+			if (!data.ok) throw new ApiError("Failed to fetch user.", data.status);
 			return data.json();
 		},
 		...options,
