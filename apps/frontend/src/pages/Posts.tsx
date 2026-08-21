@@ -13,7 +13,7 @@ import { cn } from "../lib/utils";
 
 export function Posts() {
 	const { data: session } = authClient.useSession();
-	const [searchParams] = useSearchParams();
+	const [searchParams, setSearchParam] = useSearchParams();
 
 	// Post Data
 	const [search, setSearch] = useState("");
@@ -27,6 +27,14 @@ export function Posts() {
 
 	// Composer
 	const [showComposer, setShowComposer] = useState<boolean>(false);
+	useEffect(() => {
+		if ((showComposer || search) && sharedPostId) {
+			setSearchParam((prev) => {
+				prev.delete("id");
+				return prev;
+			});
+		}
+	}, [showComposer, search]);
 
 	// Mobile Optimizations for the compose trigger
 	const [showComposerTrigger, setShowComposerTrigger] = useState<boolean>(true);
