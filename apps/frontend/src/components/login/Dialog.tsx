@@ -26,7 +26,7 @@ export function LoginDialog({ onSuccess }: { onSuccess: () => void }) {
 		onSuccess();
 	};
 	const onRegisterSuccess = () => {
-		toast.add({ type: "success", title: "Successfully logged in." });
+		toast.add({ type: "success", title: "Successfully signed up." });
 		onSuccess();
 	};
 

@@ -126,12 +126,12 @@ export function Composer({
 					>
 						{isPending ? (
 							<>
-								<Spinner /> Posting
+								<Spinner /> {edit ? "Saving" : "Posting"}
 							</>
 						) : (
 							<>
 								<Send />
-								Post
+								{edit ? "Save" : "Post"}
 							</>
 						)}
 					</Button>

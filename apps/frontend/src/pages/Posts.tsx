@@ -1,4 +1,4 @@
-import { Plus, TriangleAlert } from "lucide-react";
+import { Ghost, Plus, TriangleAlert } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 import { Composer } from "@/components/posts/Composer";
@@ -6,6 +6,7 @@ import { PostCard } from "@/components/posts/Post";
 import { Button } from "@/components/ui/button";
 import {
 	Empty,
+	EmptyContent,
 	EmptyDescription,
 	EmptyHeader,
 	EmptyMedia,
@@ -32,7 +33,7 @@ export function PostsPage() {
 	const {
 		data: sharedPost,
 		error: sharedPostErr,
-		isPending: sharedPostIsPending,
+		isFetching: sharedPostIsFetching,
 	} = usePost(sharedPostId ?? "", {
 		enabled: Boolean(sharedPostId),
 	});
@@ -60,7 +61,7 @@ export function PostsPage() {
 	}, []);
 
 	return (
-		<div className="main-center">
+		<div className="main-center flex flex-1 flex-col">
 			<div className="flex flex-row justify-between items-center p-2">
 				<Input
 					value={search}
@@ -72,7 +73,8 @@ export function PostsPage() {
 					<Button
 						className={cn(
 							"hover:cursor-pointer fixed bottom-4 right-4 flex items-center justify-center sm:static sm:gap-2 max-sm:size-14",
-							(!showComposerTrigger || composer) && "hidden",
+							composer && "hidden",
+							!showComposerTrigger && "max-sm:hidden",
 						)}
 						onClick={() => setComposer({})}
 					>
@@ -118,7 +120,7 @@ export function PostsPage() {
 					</Empty>
 					<Separator />
 				</>
-			) : sharedPostIsPending ? (
+			) : sharedPostIsFetching ? (
 				<>
 					<div className="flex flex-row items-center justify-center p-4 gap-2">
 						<Spinner /> Loading...
@@ -127,22 +129,55 @@ export function PostsPage() {
 				</>
 			) : null}
 
-			<div className="flex flex-col p-4 gap-2">
-				{posts
-					?.filter(
-						(p) =>
-							p.nanoid !== sharedPost?.nanoid &&
-							p.nanoid !== composer?.edit?.nanoid,
-					)
-					.map((p) => (
-						<PostCard
-							key={p.nanoid}
-							postData={p}
-							currentUid={session?.user.id}
-							onEdit={(p) => setComposer({ edit: p })}
-						/>
-					))}
-			</div>
+			{posts && posts.length > 0 ? (
+				<div className="flex flex-col p-4 gap-2">
+					{posts
+						?.filter(
+							(p) =>
+								p.nanoid !== sharedPost?.nanoid &&
+								p.nanoid !== composer?.edit?.nanoid,
+						)
+						.map((p) => (
+							<PostCard
+								key={p.nanoid}
+								postData={p}
+								currentUid={session?.user.id}
+								onEdit={(p) => setComposer({ edit: p })}
+							/>
+						))}
+				</div>
+			) : search ? (
+				<Empty>
+					<EmptyHeader>
+						<EmptyMedia>
+							<Ghost />
+						</EmptyMedia>
+						<EmptyTitle>No Results</EmptyTitle>
+						<EmptyDescription>
+							We looked everywhere, and found nothing...
+						</EmptyDescription>
+					</EmptyHeader>
+				</Empty>
+			) : !composer ? (
+				<Empty>
+					<EmptyHeader>
+						<EmptyMedia>
+							<Ghost />
+						</EmptyMedia>
+						<EmptyTitle>No Posts Yet...</EmptyTitle>
+						<EmptyDescription>
+							No one has posted anything yet, but you could be the first!
+						</EmptyDescription>
+						<EmptyContent>
+							{session && (
+								<Button onClick={() => setComposer({})}>
+									<Plus /> New Post
+								</Button>
+							)}
+						</EmptyContent>
+					</EmptyHeader>
+				</Empty>
+			) : null}
 		</div>
 	);
 }

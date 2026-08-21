@@ -1,4 +1,4 @@
-import { KeyIcon, LogOut, Mail, User, UserIcon } from "lucide-react";
+import { Home, KeyIcon, LogOut, User, UserIcon } from "lucide-react";
 import "@/assets/css/navbar.css";
 import { useState } from "react";
 import { useNavigate } from "react-router";
@@ -32,7 +32,7 @@ export function Navbar() {
 					className="h-full w-auto aspect-square group"
 					onClick={() => nav("/posts")}
 				>
-					<Mail className="size-7.5 group-active:scale-95 group-hover:text-primary transition-all" />
+					<Home className="size-7.5 group-active:scale-95 group-hover:text-primary transition-all" />
 				</Button>
 				<Separator orientation="vertical" />
 			</span>
