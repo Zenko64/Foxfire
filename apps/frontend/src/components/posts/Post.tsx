@@ -79,7 +79,7 @@ export function PostCard({
 						{postData.author.image ? (
 							<img
 								alt="Avatar"
-								className="size-32"
+								className="size-8"
 								src={postData.author.image}
 							/>
 						) : (
