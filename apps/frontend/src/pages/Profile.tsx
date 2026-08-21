@@ -1,12 +1,16 @@
-import { User } from "lucide-react";
+import { Edit, User } from "lucide-react";
 import { useParams, useSearchParams } from "react-router";
 import { PostCard } from "@/components/posts/Post";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { usePost, usePosts } from "@/hooks/posts/queries";
 import { useUser } from "@/hooks/users/queries";
 import { authClient } from "@/lib/auth";
 
 export function Profile() {
+	const [searchParams] = useSearchParams();
+
 	// Account data
 	const { username: usernameParam } = useParams();
 	const { data: session } = authClient.useSession();
@@ -22,25 +26,49 @@ export function Profile() {
 		{ enabled: Boolean(data?.username) },
 	);
 
-	const [searchParams] = useSearchParams();
-	const sharedPostId = searchParams.get("id");
-
 	// Shared Posts
+	const sharedPostId = searchParams.get("id");
 	const { data: sharedPost } = usePost(sharedPostId ?? "", {
 		enabled: Boolean(sharedPostId),
 	});
 
+	const isOwner = session?.user.username === data?.username;
+
 	return (
 		<div className="main-center flex flex-col">
-			<div className="flex flex-row p-8">
-				{data?.image ? (
-					<img alt="Avatar" src={data.image} className="size-32" />
-				) : (
-					<User className=" border p-4 size-20" />
-				)}
-				<div className="flex flex-col items-start justify-start pl-4">
-					<p className="text-xl">{data?.displayUsername}</p>
-					<p className="text-xs text-muted-foreground">@{data?.username}</p>
+			<div className="flex flex-row p-8 justify-between">
+				<div className="flex flex-row">
+					{data?.image ? (
+						<img alt="Avatar" src={data.image} className="size-32" />
+					) : (
+						<User className=" border p-4 size-20" />
+					)}
+					<div className="flex flex-col items-start justify-start pl-4">
+						<p className="text-xl">{data?.displayUsername}</p>
+						<p className="text-xs text-muted-foreground">@{data?.username}</p>
+					</div>
+				</div>
+				<div className="flex flex-row">
+					{/** TODO: Implement Profile Editor in dedicated component file */}
+					{isOwner && (
+						<Dialog>
+							<DialogTrigger
+								render={
+									<Button variant="outline">
+										<Edit />
+										Edit
+									</Button>
+								}
+							/>
+							<DialogContent>
+								{data?.image ? (
+									<img alt="Avatar" src={data.image} className="size-15" />
+								) : (
+									<User className=" border p-4 size-15" />
+								)}
+							</DialogContent>
+						</Dialog>
+					)}
 				</div>
 			</div>
 			<Separator />
