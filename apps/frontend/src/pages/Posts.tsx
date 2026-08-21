@@ -97,7 +97,11 @@ export function Posts() {
 
 			<div className="flex flex-col p-4 gap-2">
 				{posts
-					?.filter((p) => p.nanoid !== sharedPost?.nanoid)
+					?.filter(
+						(p) =>
+							p.nanoid !== sharedPost?.nanoid &&
+							p.nanoid !== composer?.edit?.nanoid,
+					)
 					.map((p) => (
 						<PostCard
 							key={p.nanoid}
