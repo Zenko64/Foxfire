@@ -2,7 +2,7 @@
  * @name Database Core
  * @module db/core
  * @file db/index.ts
- * @description This file returns a instance to the Postgres database.s
+ * @description This file returns an instance of the Postgres database.
  */
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
