@@ -34,6 +34,8 @@ export function Composer({
 		z.infer<typeof postSchema.shape.privacy>
 	>(edit?.privacy ?? "public");
 
+	const isPending = createStatus === "pending" || patchStatus === "pending";
+
 	const onSubmit = () => {
 		if (edit) {
 			patchMutate(
@@ -67,6 +69,7 @@ export function Composer({
 	return (
 		<div className="min-w-full w-full h-full min-h-40 bg-card border flex flex-col">
 			<Textarea
+				disabled={isPending}
 				value={text}
 				onChange={(e) => setText(e.target.value)}
 				className="outline-0 bg-transparent! resize-none flex-1 min-h-0 field-sizing-fixed p-4"
@@ -78,6 +81,7 @@ export function Composer({
 					value={privacy}
 					onValueChange={(e) => setPrivacy(e ?? "public")}
 					items={privacyLabels}
+					disabled={isPending}
 				>
 					<SelectTrigger>
 						<SelectValue>
@@ -111,19 +115,16 @@ export function Composer({
 						type="button"
 						variant="secondary"
 						onClick={() => onComplete()}
+						disabled={isPending}
 					>
 						<X />
 						Cancel
 					</Button>
 					<Button
 						onClick={() => onSubmit()}
-						disabled={
-							!text.trim() ||
-							createStatus === "pending" ||
-							patchStatus === "pending"
-						}
+						disabled={!text.trim() || isPending}
 					>
-						{createStatus === "pending" || patchStatus === "pending" ? (
+						{isPending ? (
 							<>
 								<Spinner /> Posting
 							</>

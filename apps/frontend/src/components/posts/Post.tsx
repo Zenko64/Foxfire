@@ -43,7 +43,18 @@ export function PostCard({
 		const postUrl = new URL(window.location.origin);
 		postUrl.pathname = "/posts";
 		postUrl.searchParams.set("id", postData.nanoid);
-		navigator.clipboard.writeText(postUrl.toString());
+		navigator.clipboard
+			.writeText(postUrl.toString())
+			.catch(() =>
+				toast.add({
+					type: "error",
+					title: "Failed to copy post to clipboard.",
+					description: "Unable to access the clipboard.",
+				}),
+			)
+			.then(() =>
+				toast.add({ type: "success", title: "Copied post link to clipboard." }),
+			);
 	};
 
 	return (

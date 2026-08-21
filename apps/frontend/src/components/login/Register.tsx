@@ -122,6 +122,7 @@ export function Register({ onSuccess }: { onSuccess?: () => void }) {
 						<Input
 							{...field}
 							id={field.name}
+							disabled={isPending}
 							type="text"
 							placeholder="Full Name"
 							isInvalid={fieldState.invalid}
@@ -146,6 +147,7 @@ export function Register({ onSuccess }: { onSuccess?: () => void }) {
 							<Input
 								{...field}
 								id={field.name}
+								disabled={isPending}
 								type="text"
 								placeholder="Username"
 								isInvalid={fieldState.invalid}
