@@ -66,7 +66,7 @@ export function Profile() {
 				return prev;
 			});
 		}
-	}, [composer, search]);
+	}, [composer, search, sharedPostId, setSearchParams]);
 
 	// Mobile Optimizations for the compose trigger
 	const [showComposerTrigger, setShowComposerTrigger] = useState<boolean>(true);
