@@ -1,3 +1,9 @@
+/**
+ * @name Foxfire Schema
+ * @description This file contains the database schema for data related to the app. (excluding authentication-related data)
+ * @module db/schema
+ * @file db/schema.ts
+ */
 import { relations } from "drizzle-orm";
 import {
 	boolean,

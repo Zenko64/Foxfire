@@ -136,13 +136,20 @@ export function Register({ onSuccess }: { onSuccess?: () => void }) {
 				control={form.control}
 				render={({ field, fieldState }) => (
 					<Field data-invalid={fieldState.invalid}>
-						<span className="flex flex-row items-stretch">
+						<span className="relative flex flex-row items-center text-center justify-start">
+							<p
+								aria-hidden
+								className="absolute left-1.5 select-none text-xs pointer-events-none text-muted-foreground"
+							>
+								@
+							</p>
 							<Input
 								{...field}
 								id={field.name}
 								type="text"
 								placeholder="Username"
 								isInvalid={fieldState.invalid}
+								className="pl-4.5"
 							/>
 							<Button
 								type="submit"

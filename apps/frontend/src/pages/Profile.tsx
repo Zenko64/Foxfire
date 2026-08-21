@@ -1,9 +1,15 @@
 import { BanIcon, Edit, Ghost, User } from "lucide-react";
-import { Navigate, useParams, useSearchParams } from "react-router";
+import { useState } from "react";
+import {
+	Navigate,
+	useNavigate,
+	useParams,
+	useSearchParams,
+} from "react-router";
 import { PostCard } from "@/components/posts/Post";
 import { ProfileEditDialog } from "@/components/profile/ProfileEditor";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogHeader, DialogTrigger } from "@/components/ui/dialog";
 import {
 	Empty,
 	EmptyDescription,
@@ -12,11 +18,15 @@ import {
 	EmptyTitle,
 } from "@/components/ui/empty";
 import { Separator } from "@/components/ui/separator";
+import { toast } from "@/components/ui/toast";
 import { usePost, usePosts } from "@/hooks/posts/queries";
 import { useUser } from "@/hooks/users/queries";
 import { authClient } from "@/lib/auth";
+import { user } from "../../../backend/src/db/auth-schema";
 
 export function Profile() {
+	const [isEditingProfile, setIsEditingProfile] = useState<boolean>(false);
+	const nav = useNavigate();
 	// Account data
 	const { username: usernamePathParam } = useParams();
 	const { data: session, isPending } = authClient.useSession();
@@ -95,8 +105,11 @@ export function Profile() {
 					</div>
 				</div>
 				<div className="flex flex-row">
-					{isOwner && data && (
-						<Dialog>
+					{isOwner && session && (
+						<Dialog
+							onOpenChange={() => setIsEditingProfile((prev) => !prev)}
+							open={isEditingProfile}
+						>
 							<DialogTrigger
 								render={
 									<Button variant="outline">
@@ -105,7 +118,13 @@ export function Profile() {
 									</Button>
 								}
 							/>
-							<ProfileEditDialog user={data} />
+							<ProfileEditDialog
+								onSuccess={(data) => {
+									setIsEditingProfile(false);
+									if (data.username !== session.user.username)
+										nav(`/user/${data.username}`);
+								}}
+							/>
 						</Dialog>
 					)}
 				</div>

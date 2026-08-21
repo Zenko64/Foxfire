@@ -1,3 +1,9 @@
+/**
+ * @file core/http/index.ts
+ * @name http/core
+ * @module core/http
+ * @description Http Server Core. Exports The AppType used for Hono/Client route type inference.
+ */
 import { attachAuth } from "../../auth/http/middlewares";
 import authRouter from "../../auth/http/routes";
 import postsRouter from "../../posts/http/routes";
