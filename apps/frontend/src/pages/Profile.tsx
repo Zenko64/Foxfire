@@ -1,5 +1,5 @@
-import { Edit, Ghost, User } from "lucide-react";
-import { useParams, useSearchParams } from "react-router";
+import { BanIcon, Edit, Ghost, User } from "lucide-react";
+import { Navigate, useParams, useSearchParams } from "react-router";
 import { PostCard } from "@/components/posts/Post";
 import { ProfileEditDialog } from "@/components/profile/ProfileEditor";
 import { Button } from "@/components/ui/button";
@@ -17,13 +17,11 @@ import { useUser } from "@/hooks/users/queries";
 import { authClient } from "@/lib/auth";
 
 export function Profile() {
-	const [searchParams] = useSearchParams();
-
 	// Account data
-	const { username: usernameParam } = useParams();
-	const { data: session } = authClient.useSession();
+	const { username: usernamePathParam } = useParams();
+	const { data: session, isPending } = authClient.useSession();
 
-	const profileUsername = usernameParam ?? session?.user.username;
+	const profileUsername = usernamePathParam ?? session?.user.username;
 	const { data, error } = useUser(profileUsername ?? "", {
 		enabled: Boolean(profileUsername),
 	});
@@ -35,12 +33,34 @@ export function Profile() {
 	);
 
 	// Shared Posts
+	const [searchParams] = useSearchParams();
 	const sharedPostId = searchParams.get("id");
 	const { data: sharedPost } = usePost(sharedPostId ?? "", {
 		enabled: Boolean(sharedPostId),
 	});
 
 	const isOwner = session?.user.username === data?.username;
+
+	if (!usernamePathParam) {
+		if (isPending) return null;
+		if (!session)
+			return (
+				<div className="items-center justify-center flex flex-1 flex-col">
+					<Empty>
+						<EmptyHeader>
+							<EmptyMedia>
+								<BanIcon />
+							</EmptyMedia>
+							<EmptyTitle>Unauthorized</EmptyTitle>
+							<EmptyDescription>
+								You need an account to access this page.
+							</EmptyDescription>
+						</EmptyHeader>
+					</Empty>
+				</div>
+			);
+		return <Navigate to={`/user/${session.user.username}`} replace />;
+	}
 
 	if (!data || error?.status === 404) {
 		return (
