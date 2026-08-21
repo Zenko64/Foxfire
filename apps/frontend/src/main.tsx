@@ -20,7 +20,6 @@ const router = createBrowserRouter([
 			},
 			{
 				path: "/posts",
-				index: true,
 				element: <Posts />,
 			},
 			{
