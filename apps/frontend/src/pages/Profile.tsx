@@ -1,8 +1,10 @@
 import { Edit, User } from "lucide-react";
 import { useParams, useSearchParams } from "react-router";
 import { PostCard } from "@/components/posts/Post";
+import { ProfileEditDialog } from "@/components/profile/ProfileEditor";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Empty } from "@/components/ui/empty";
 import { Separator } from "@/components/ui/separator";
 import { usePost, usePosts } from "@/hooks/posts/queries";
 import { useUser } from "@/hooks/users/queries";
@@ -16,7 +18,7 @@ export function Profile() {
 	const { data: session } = authClient.useSession();
 
 	const profileUsername = usernameParam ?? session?.user.username;
-	const { data } = useUser(profileUsername ?? "", {
+	const { data, isError } = useUser(profileUsername ?? "", {
 		enabled: Boolean(profileUsername),
 	});
 
@@ -34,6 +36,10 @@ export function Profile() {
 
 	const isOwner = session?.user.username === data?.username;
 
+	if (!data || isError) {
+		return <Empty></Empty>;
+	}
+
 	return (
 		<div className="main-center flex flex-col">
 			<div className="flex flex-row p-8 justify-between">
@@ -49,8 +55,7 @@ export function Profile() {
 					</div>
 				</div>
 				<div className="flex flex-row">
-					{/** TODO: Implement Profile Editor in dedicated component file */}
-					{isOwner && (
+					{isOwner && data && (
 						<Dialog>
 							<DialogTrigger
 								render={
@@ -60,13 +65,7 @@ export function Profile() {
 									</Button>
 								}
 							/>
-							<DialogContent>
-								{data?.image ? (
-									<img alt="Avatar" src={data.image} className="size-15" />
-								) : (
-									<User className=" border p-4 size-15" />
-								)}
-							</DialogContent>
+							<ProfileEditDialog user={data} />
 						</Dialog>
 					)}
 				</div>

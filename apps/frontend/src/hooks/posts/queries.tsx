@@ -7,6 +7,7 @@ import {
 } from "@tanstack/react-query";
 import type { InferRequestType, InferResponseType } from "hono/client";
 import { client } from "@/lib/client";
+import { ApiError } from "@/lib/errors";
 
 export type Post = InferResponseType<typeof client.api.posts.$get, 200>[number];
 type InsertPost = InferRequestType<typeof client.api.posts.$post>["json"];
@@ -22,7 +23,7 @@ export function usePosts(
 		queryKey: ["posts", params],
 		queryFn: async (): Promise<Post[]> => {
 			const data = await client.api.posts.$get({ query: params ?? {} });
-			if (!data.ok) throw new Error(`Failed to fetch posts. ${data.status}`);
+			if (!data.ok) throw new ApiError("Failed to fetch posts.", data.status);
 			return data.json();
 		},
 		...options,
@@ -41,7 +42,7 @@ export function usePost(
 			const data = await client.api.posts[":nanoid"].$get({
 				param: { nanoid },
 			});
-			if (!data.ok) throw new Error(`Failed to fetch post. ${data.status}`);
+			if (!data.ok) throw new ApiError("Failed to fetch post.", data.status);
 			return data.json();
 		},
 		...options,
@@ -55,7 +56,7 @@ export function useCreatePost(
 	return useMutation({
 		mutationFn: async (postData: InsertPost): Promise<Post> => {
 			const data = await client.api.posts.$post({ json: postData });
-			if (!data.ok) throw new Error(`Failed to create post. ${data.status}`);
+			if (!data.ok) throw new ApiError("Failed to create post.", data.status);
 			return data.json();
 		},
 		onSuccess: () => {
@@ -74,7 +75,7 @@ export function useDeletePost(
 			const data = await client.api.posts[":nanoid"].$delete({
 				param: { nanoid },
 			});
-			if (!data.ok) throw new Error(`Failed to delete post. ${data.status}`);
+			if (!data.ok) throw new ApiError("Failed to delete post.", data.status);
 			return true;
 		},
 		onSuccess: (_data, nanoid: string) => {
@@ -98,7 +99,7 @@ export function usePatchPost(
 				param: { nanoid: args.postNanoid },
 				json: args.postData,
 			});
-			if (!data.ok) throw new Error(`Failed to create post. ${data.status}`);
+			if (!data.ok) throw new ApiError("Failed to update post.", data.status);
 			return data.json();
 		},
 		onSuccess: (updatedPost: Post) => {
