@@ -34,7 +34,7 @@ export function Posts() {
 				return prev;
 			});
 		}
-	}, [composer, search]);
+	}, [composer, search, sharedPostId, setSearchParam]);
 
 	// Mobile Optimizations for the compose trigger
 	const [showComposerTrigger, setShowComposerTrigger] = useState<boolean>(true);
