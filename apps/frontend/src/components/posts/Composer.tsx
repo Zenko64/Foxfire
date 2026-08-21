@@ -2,7 +2,8 @@ import type { postSchema } from "@foxfire/types";
 import { Send, X } from "lucide-react";
 import { useState } from "react";
 import type z from "zod";
-import { useCreatePost } from "@/hooks/posts/queries";
+import { type Post, useCreatePost } from "@/hooks/posts/queries";
+import { usePatchPost } from "../../hooks/posts/queries";
 import { privacyLabels } from "../constants/Privacy";
 import { Button } from "../ui/button";
 import {
@@ -18,15 +19,38 @@ import { Spinner } from "../ui/spinner";
 import { Textarea } from "../ui/textarea";
 import { toast } from "../ui/toast";
 
-export function Composer({ onComplete }: { onComplete: () => void }) {
-	const { status, mutate } = useCreatePost();
+export function Composer({
+	onComplete,
+	edit,
+}: {
+	onComplete: () => void;
+	edit?: Post;
+}) {
+	const { status: createStatus, mutate: createMutate } = useCreatePost();
+	const { status: patchStatus, mutate: patchMutate } = usePatchPost();
 
-	const [text, setText] = useState<string>("");
-	const [privacy, setPrivacy] =
-		useState<z.infer<typeof postSchema.shape.privacy>>("public");
+	const [text, setText] = useState<string>(edit?.text ?? "");
+	const [privacy, setPrivacy] = useState<
+		z.infer<typeof postSchema.shape.privacy>
+	>(edit?.privacy ?? "public");
 
 	const onSubmit = () => {
-		mutate(
+		if (edit) {
+			patchMutate(
+				{ postData: { privacy, text }, postNanoid: edit.nanoid },
+				{
+					onSuccess: onComplete,
+					onError: (err: unknown) =>
+						toast.add({
+							title: "Failed to update post.",
+							description: err instanceof Error ? err.message : String(err),
+							type: "error",
+						}),
+				},
+			);
+			return;
+		}
+		createMutate(
 			{ pinned: false, privacy, text },
 			{
 				onSuccess: onComplete,
@@ -93,9 +117,13 @@ export function Composer({ onComplete }: { onComplete: () => void }) {
 					</Button>
 					<Button
 						onClick={() => onSubmit()}
-						disabled={!text.trim() || status === "pending"}
+						disabled={
+							!text.trim() ||
+							createStatus === "pending" ||
+							patchStatus === "pending"
+						}
 					>
-						{status === "pending" ? (
+						{createStatus === "pending" || patchStatus === "pending" ? (
 							<>
 								<Spinner /> Posting
 							</>

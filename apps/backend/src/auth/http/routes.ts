@@ -1,3 +1,9 @@
+/**
+ * @file auth/http/routes.ts
+ * @name routes
+ * @module auth/http/routes
+ * @description This file provides a router instance that handles requests related to authentication and user data.
+ */
 import { factory } from "../../core/http/factory";
 import { auth } from "../../lib/auth";
 import { getUser } from "../service";

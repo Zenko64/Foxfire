@@ -1,4 +1,4 @@
-import { HomeIcon, KeyIcon, LogOut, Mail, User, UserIcon } from "lucide-react";
+import { KeyIcon, LogOut, Mail, User, UserIcon } from "lucide-react";
 import "@/assets/css/navbar.css";
 import { useState } from "react";
 import { useNavigate } from "react-router";
@@ -30,15 +30,6 @@ export function Navbar() {
 					variant="ghost"
 					size="icon"
 					className="h-full w-auto aspect-square group"
-					onClick={() => nav("/")}
-				>
-					<HomeIcon className="size-7.5 group-active:scale-95 group-hover:text-primary transition-all" />
-				</Button>
-				<Separator orientation="vertical" />
-				<Button
-					variant="ghost"
-					size="icon"
-					className="h-full w-auto aspect-square group"
 					onClick={() => nav("/posts")}
 				>
 					<Mail className="size-7.5 group-active:scale-95 group-hover:text-primary transition-all" />
@@ -49,10 +40,7 @@ export function Navbar() {
 				<Separator orientation="vertical" />
 				<DropdownMenu>
 					{!session?.session && (
-						<Dialog
-							onOpenChange={() => setLoginDialogState((prev) => !prev)}
-							open={loginDialog}
-						>
+						<Dialog onOpenChange={setLoginDialogState} open={loginDialog}>
 							<DialogTrigger
 								render={
 									<Button

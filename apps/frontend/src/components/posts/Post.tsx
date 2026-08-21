@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import isToday from "dayjs/plugin/isToday";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { Menu, Share, Trash, User } from "lucide-react";
+import { Edit, Menu, Share, Trash, User } from "lucide-react";
 import { useNavigate } from "react-router";
 import type { Post } from "@/hooks/posts/queries";
 import { useDeletePost } from "../../hooks/posts/queries";
@@ -23,9 +23,11 @@ dayjs.extend(isToday);
 export function PostCard({
 	postData,
 	currentUid,
+	onEdit,
 }: {
 	postData: Post;
 	currentUid?: string;
+	onEdit: (post: Post) => void;
 }) {
 	const nav = useNavigate();
 	const { mutate: mutDel, isPending: isPendingDel } = useDeletePost();
@@ -107,6 +109,10 @@ export function PostCard({
 							</DropdownMenuGroup>
 							{currentUid === postData.author.id && (
 								<DropdownMenuGroup>
+									<DropdownMenuItem onClick={() => onEdit(postData)}>
+										<Edit />
+										Edit Post
+									</DropdownMenuItem>
 									<DropdownMenuItem
 										variant="destructive"
 										onClick={() => deletePost(postData.nanoid)}

@@ -1,3 +1,9 @@
+/**
+ * @file core/env.ts
+ * @name Environment Validator
+ * @description This file exports the environment in a safer manner, the environment is verified using zod.
+ * @module core/env
+ */
 import z from "zod";
 
 const envSchema = z.object({

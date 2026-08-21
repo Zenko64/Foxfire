@@ -10,10 +10,17 @@
 	--rail-inset: calc(((100% - var(--content-width)) / 2));
 }
 
+main {
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+	max-width: var(--content-width);
+}
+
 @media (max-width: 1024px) {
 	main {
 		max-width: var(--content-width);
-		margin-top: var(--topbar-height);
+		padding-top: var(--topbar-height);
 	}
 }
 
@@ -22,11 +29,13 @@
 	.main-center {
 		margin-top: calc(var(--topbar-height) + var(--topbar-margin));
 	}
+
 	main {
 		max-width: var(--content-width);
 		margin-top: 0;
 		margin-inline: var(--content-inset);
 	}
+
 	main::after {
 		content: "";
 		position: fixed;

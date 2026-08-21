@@ -1,3 +1,9 @@
+/**
+ * @file core/http/handlers.ts
+ * @name handlers
+ * @module core/http/handlers
+ * @description This file provides handlers that are required (but not necessarily essential) for correct function of the http server, such as error handlers.
+ */
 import type { Context } from "hono";
 import type { ContentfulStatusCode } from "hono/utils/http-status";
 import { AppError } from "../../lib/errors";
