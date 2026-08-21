@@ -1,4 +1,4 @@
-import { HomeIcon, KeyIcon, LogOut, Mail, User, UserIcon } from "lucide-react";
+import { KeyIcon, LogOut, Mail, User, UserIcon } from "lucide-react";
 import "@/assets/css/navbar.css";
 import { useState } from "react";
 import { useNavigate } from "react-router";

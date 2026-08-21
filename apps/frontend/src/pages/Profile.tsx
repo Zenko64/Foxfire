@@ -1,11 +1,12 @@
-import { BanIcon, Edit, Ghost, User } from "lucide-react";
-import { useState } from "react";
+import { BanIcon, Edit, Ghost, Plus, User } from "lucide-react";
+import { useEffect, useState } from "react";
 import {
 	Navigate,
 	useNavigate,
 	useParams,
 	useSearchParams,
 } from "react-router";
+import { Composer } from "@/components/posts/Composer";
 import { PostCard } from "@/components/posts/Post";
 import { ProfileEditDialog } from "@/components/profile/ProfileEditor";
 import { Button } from "@/components/ui/button";
@@ -17,16 +18,23 @@ import {
 	EmptyMedia,
 	EmptyTitle,
 } from "@/components/ui/empty";
+import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "@/components/ui/toast";
 import { usePost, usePosts } from "@/hooks/posts/queries";
+import { useDebounce } from "@/hooks/useDebounce";
 import { useUser } from "@/hooks/users/queries";
 import { authClient } from "@/lib/auth";
+import { cn } from "@/lib/utils";
 import { user } from "../../../backend/src/db/auth-schema";
 
 export function Profile() {
-	const [isEditingProfile, setIsEditingProfile] = useState<boolean>(false);
 	const nav = useNavigate();
+	const [searchParams, setSearchParams] = useSearchParams();
+
+	// State
+	const [isEditingProfile, setIsEditingProfile] = useState<boolean>(false);
+
 	// Account data
 	const { username: usernamePathParam } = useParams();
 	const { data: session, isPending } = authClient.useSession();
@@ -36,20 +44,43 @@ export function Profile() {
 		enabled: Boolean(profileUsername),
 	});
 
-	// Account content
+	// Account Posts
+	// Post Data
+	const [search, setSearch] = useState("");
 	const { data: posts } = usePosts(
-		{ author: data?.username ?? "" },
+		{ author: data?.username ?? "", query: useDebounce(search, 300) },
 		{ enabled: Boolean(data?.username) },
 	);
 
 	// Shared Posts
-	const [searchParams] = useSearchParams();
 	const sharedPostId = searchParams.get("id");
 	const { data: sharedPost } = usePost(sharedPostId ?? "", {
 		enabled: Boolean(sharedPostId),
 	});
 
 	const isOwner = session?.user.username === data?.username;
+
+	// Composer
+	const [showComposer, setShowComposer] = useState<boolean>(false);
+	useEffect(() => {
+		if ((showComposer || search) && sharedPostId) {
+			setSearchParams((prev) => {
+				prev.delete("id");
+				return prev;
+			});
+		}
+	}, [showComposer, search]);
+
+	// Mobile Optimizations for the compose trigger
+	const [showComposerTrigger, setShowComposerTrigger] = useState<boolean>(true);
+	useEffect(() => {
+		const handleScroll = () => {
+			if (window.scrollY > 50) return setShowComposerTrigger(false);
+			setShowComposerTrigger(true);
+		};
+		window.addEventListener("scroll", handleScroll);
+		return () => window.removeEventListener("scroll", handleScroll);
+	}, []);
 
 	if (!usernamePathParam) {
 		if (isPending) return null;
@@ -130,6 +161,35 @@ export function Profile() {
 				</div>
 			</div>
 			<Separator />
+			<div className="flex flex-row justify-between items-center p-2">
+				<Input
+					value={search}
+					placeholder="Search posts..."
+					onChange={(e) => setSearch(e.target.value)}
+					className="w-full sm:w-1/3"
+				/>
+				{session && (
+					<Button
+						className={cn(
+							"hover:cursor-pointer fixed bottom-4 right-4 flex items-center justify-center sm:static sm:gap-2 max-sm:size-14",
+							!showComposerTrigger || (showComposer && "hidden"),
+						)}
+						onClick={() => setShowComposer(true)}
+					>
+						<Plus className="size-8 sm:size-4" />
+						<span className="hidden sm:inline">New Post</span>
+					</Button>
+				)}
+			</div>
+			<Separator />
+			{showComposer && (
+				<>
+					<div className="flex flex-col p-4 gap-2">
+						<Composer onComplete={() => setShowComposer(false)} />
+					</div>
+					<Separator />
+				</>
+			)}
 			{sharedPost && (
 				<>
 					<div className="flex flex-col p-4 gap-2">
