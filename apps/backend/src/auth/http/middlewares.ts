@@ -28,7 +28,7 @@ export const requireAuth = createMiddleware<
 
 /**
  * @name attachAuth
- * @description attachAuth attaches user and session context data from the request that can be read by middlewares and handlers if they exist..
+ * @description attachAuth attaches user and session context data from the request that can be read by middlewares and handlers if they exist.
  */
 export const attachAuth = createMiddleware(async (c, next) => {
 	const session = await auth.api.getSession({
