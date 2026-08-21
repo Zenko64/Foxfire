@@ -6,7 +6,7 @@ import { PostCard } from "@/components/posts/Post";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { usePost, usePosts } from "@/hooks/posts/queries";
+import { type Post, usePost, usePosts } from "@/hooks/posts/queries";
 import { useDebounce } from "@/hooks/useDebounce";
 import { authClient } from "@/lib/auth";
 import { cn } from "../lib/utils";
@@ -26,15 +26,15 @@ export function Posts() {
 	});
 
 	// Composer
-	const [showComposer, setShowComposer] = useState<boolean>(false);
+	const [composer, setComposer] = useState<{ edit?: Post }>();
 	useEffect(() => {
-		if ((showComposer || search) && sharedPostId) {
+		if ((composer || search) && sharedPostId) {
 			setSearchParam((prev) => {
 				prev.delete("id");
 				return prev;
 			});
 		}
-	}, [showComposer, search]);
+	}, [composer, search]);
 
 	// Mobile Optimizations for the compose trigger
 	const [showComposerTrigger, setShowComposerTrigger] = useState<boolean>(true);
@@ -60,9 +60,9 @@ export function Posts() {
 					<Button
 						className={cn(
 							"hover:cursor-pointer fixed bottom-4 right-4 flex items-center justify-center sm:static sm:gap-2 max-sm:size-14",
-							!showComposerTrigger || (showComposer && "hidden"),
+							(!showComposerTrigger || composer) && "hidden",
 						)}
-						onClick={() => setShowComposer(true)}
+						onClick={() => setComposer({})}
 					>
 						<Plus className="size-8 sm:size-4" />
 						<span className="hidden sm:inline">New Post</span>
@@ -70,10 +70,14 @@ export function Posts() {
 				)}
 			</div>
 			<Separator />
-			{showComposer && (
+			{composer && (
 				<>
 					<div className="flex flex-col p-4 gap-2">
-						<Composer onComplete={() => setShowComposer(false)} />
+						<Composer
+							onComplete={() => setComposer(undefined)}
+							edit={composer.edit}
+							key={composer.edit?.nanoid ?? "newPost"}
+						/>
 					</div>
 					<Separator />
 				</>
@@ -81,7 +85,11 @@ export function Posts() {
 			{sharedPost && (
 				<>
 					<div className="flex flex-col p-4 gap-2">
-						<PostCard postData={sharedPost} currentUid={session?.user.id} />
+						<PostCard
+							postData={sharedPost}
+							currentUid={session?.user.id}
+							onEdit={(p) => setComposer({ edit: p })}
+						/>
 					</div>
 					<Separator />
 				</>
@@ -95,6 +103,7 @@ export function Posts() {
 							key={p.nanoid}
 							postData={p}
 							currentUid={session?.user.id}
+							onEdit={(p) => setComposer({ edit: p })}
 						/>
 					))}
 			</div>

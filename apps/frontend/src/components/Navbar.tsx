@@ -40,10 +40,7 @@ export function Navbar() {
 				<Separator orientation="vertical" />
 				<DropdownMenu>
 					{!session?.session && (
-						<Dialog
-							onOpenChange={() => setLoginDialogState((prev) => !prev)}
-							open={loginDialog}
-						>
+						<Dialog onOpenChange={setLoginDialogState} open={loginDialog}>
 							<DialogTrigger
 								render={
 									<Button

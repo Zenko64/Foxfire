@@ -10,7 +10,7 @@ import { Composer } from "@/components/posts/Composer";
 import { PostCard } from "@/components/posts/Post";
 import { ProfileEditDialog } from "@/components/profile/ProfileEditor";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogHeader, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import {
 	Empty,
 	EmptyDescription,
@@ -20,13 +20,11 @@ import {
 } from "@/components/ui/empty";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { toast } from "@/components/ui/toast";
-import { usePost, usePosts } from "@/hooks/posts/queries";
+import { type Post, usePost, usePosts } from "@/hooks/posts/queries";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useUser } from "@/hooks/users/queries";
 import { authClient } from "@/lib/auth";
 import { cn } from "@/lib/utils";
-import { user } from "../../../backend/src/db/auth-schema";
 
 export function Profile() {
 	const nav = useNavigate();
@@ -44,7 +42,6 @@ export function Profile() {
 		enabled: Boolean(profileUsername),
 	});
 
-	// Account Posts
 	// Post Data
 	const [search, setSearch] = useState("");
 	const { data: posts } = usePosts(
@@ -61,15 +58,15 @@ export function Profile() {
 	const isOwner = session?.user.username === data?.username;
 
 	// Composer
-	const [showComposer, setShowComposer] = useState<boolean>(false);
+	const [composer, setComposer] = useState<{ edit?: Post } | null>(null);
 	useEffect(() => {
-		if ((showComposer || search) && sharedPostId) {
+		if ((composer || search) && sharedPostId) {
 			setSearchParams((prev) => {
 				prev.delete("id");
 				return prev;
 			});
 		}
-	}, [showComposer, search]);
+	}, [composer, search]);
 
 	// Mobile Optimizations for the compose trigger
 	const [showComposerTrigger, setShowComposerTrigger] = useState<boolean>(true);
@@ -137,10 +134,7 @@ export function Profile() {
 				</div>
 				<div className="flex flex-row">
 					{isOwner && session && (
-						<Dialog
-							onOpenChange={() => setIsEditingProfile((prev) => !prev)}
-							open={isEditingProfile}
-						>
+						<Dialog onOpenChange={setIsEditingProfile} open={isEditingProfile}>
 							<DialogTrigger
 								render={
 									<Button variant="outline">
@@ -172,9 +166,11 @@ export function Profile() {
 					<Button
 						className={cn(
 							"hover:cursor-pointer fixed bottom-4 right-4 flex items-center justify-center sm:static sm:gap-2 max-sm:size-14",
-							!showComposerTrigger || (showComposer && "hidden"),
+							(!showComposerTrigger || composer) && "hidden",
 						)}
-						onClick={() => setShowComposer(true)}
+						onClick={() => {
+							setComposer({});
+						}}
 					>
 						<Plus className="size-8 sm:size-4" />
 						<span className="hidden sm:inline">New Post</span>
@@ -182,10 +178,14 @@ export function Profile() {
 				)}
 			</div>
 			<Separator />
-			{showComposer && (
+			{composer && (
 				<>
 					<div className="flex flex-col p-4 gap-2">
-						<Composer onComplete={() => setShowComposer(false)} />
+						<Composer
+							onComplete={() => setComposer(null)}
+							edit={composer?.edit}
+							key={composer.edit?.nanoid ?? "newPost"}
+						/>
 					</div>
 					<Separator />
 				</>
@@ -193,7 +193,11 @@ export function Profile() {
 			{sharedPost && (
 				<>
 					<div className="flex flex-col p-4 gap-2">
-						<PostCard postData={sharedPost} currentUid={session?.user.id} />
+						<PostCard
+							postData={sharedPost}
+							currentUid={session?.user.id}
+							onEdit={(p) => setComposer({ edit: p })}
+						/>
 					</div>
 					<Separator />
 				</>
@@ -201,12 +205,17 @@ export function Profile() {
 			<div className="flex flex-col p-4 gap-2">
 				{posts
 					?.toSorted((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0))
-					.filter((p) => p.nanoid !== sharedPost?.nanoid)
+					.filter(
+						(p) =>
+							p.nanoid !== sharedPost?.nanoid &&
+							p.nanoid !== composer?.edit?.nanoid,
+					)
 					.map((p) => (
 						<PostCard
 							key={p.nanoid}
 							postData={p}
 							currentUid={session?.user.id}
+							onEdit={(p) => setComposer({ edit: p })}
 						/>
 					))}
 			</div>

@@ -28,17 +28,17 @@ export function ProfileEditDialog({
 	const [isPending, setIsPending] = useState<boolean>(false);
 	const { data } = authClient.useSession();
 	const queryClient = useQueryClient();
-	if (!data) return null;
 	const form = useForm<z.infer<typeof schema>>({
 		resolver: zodResolver(schema),
 		defaultValues: {
-			displayUsername: data.user.displayUsername ?? "",
-			username: data.user.username ?? "",
-			name: data.user.name,
+			displayUsername: data?.user.displayUsername ?? "",
+			username: data?.user.username ?? "",
+			name: data?.user.name,
 		},
 	});
 
 	const onSubmit = form.handleSubmit(async (values) => {
+		setIsPending(true);
 		const { error } = await authClient.updateUser({
 			...values,
 		});
@@ -77,7 +77,7 @@ export function ProfileEditDialog({
 			<form className="flex flex-col gap-4" onSubmit={onSubmit}>
 				<div className="flex flex-row gap-2">
 					<div className="flex size-15 shrink-0 items-center justify-center overflow-hidden border">
-						{data.user.image ? (
+						{data?.user.image ? (
 							<img alt="Avatar" src={data.user.image} className="size-15" />
 						) : (
 							<UserIcon className="p-4 size-32 aspect-square" />
