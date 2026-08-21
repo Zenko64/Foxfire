@@ -1,17 +1,25 @@
-import { Plus } from "lucide-react";
+import { Plus, TriangleAlert } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 import { Composer } from "@/components/posts/Composer";
 import { PostCard } from "@/components/posts/Post";
 import { Button } from "@/components/ui/button";
+import {
+	Empty,
+	EmptyDescription,
+	EmptyHeader,
+	EmptyMedia,
+	EmptyTitle,
+} from "@/components/ui/empty";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { Spinner } from "@/components/ui/spinner";
 import { type Post, usePost, usePosts } from "@/hooks/posts/queries";
 import { useDebounce } from "@/hooks/useDebounce";
 import { authClient } from "@/lib/auth";
 import { cn } from "../lib/utils";
 
-export function Posts() {
+export function PostsPage() {
 	const { data: session } = authClient.useSession();
 	const [searchParams, setSearchParam] = useSearchParams();
 
@@ -21,7 +29,11 @@ export function Posts() {
 
 	// Shared Posts
 	const sharedPostId = searchParams.get("id");
-	const { data: sharedPost } = usePost(sharedPostId ?? "", {
+	const {
+		data: sharedPost,
+		error: sharedPostErr,
+		isPending: sharedPostIsPending,
+	} = usePost(sharedPostId ?? "", {
 		enabled: Boolean(sharedPostId),
 	});
 
@@ -82,7 +94,7 @@ export function Posts() {
 					<Separator />
 				</>
 			)}
-			{sharedPost && (
+			{sharedPost ? (
 				<>
 					<div className="flex flex-col p-4 gap-2">
 						<PostCard
@@ -93,7 +105,27 @@ export function Posts() {
 					</div>
 					<Separator />
 				</>
-			)}
+			) : sharedPostErr ? (
+				<>
+					<Empty className="flex flex-col p-4 gap-2">
+						<EmptyHeader>
+							<EmptyMedia>
+								<TriangleAlert />
+							</EmptyMedia>
+							<EmptyTitle>An Error Has Occurred</EmptyTitle>
+							<EmptyDescription>{sharedPostErr.message}</EmptyDescription>
+						</EmptyHeader>
+					</Empty>
+					<Separator />
+				</>
+			) : sharedPostIsPending ? (
+				<>
+					<div className="flex flex-row items-center justify-center p-4 gap-2">
+						<Spinner /> Loading...
+					</div>
+					<Separator />
+				</>
+			) : null}
 
 			<div className="flex flex-col p-4 gap-2">
 				{posts

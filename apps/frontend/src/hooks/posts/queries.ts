@@ -17,7 +17,7 @@ type PatchPost = InferRequestType<
 
 export function usePosts(
 	params?: { query?: string; author?: string },
-	options?: Partial<UseQueryOptions<Post[]>>,
+	options?: Partial<UseQueryOptions<Post[], ApiError>>,
 ) {
 	return useQuery({
 		queryKey: ["posts", params],
@@ -32,7 +32,7 @@ export function usePosts(
 
 export function usePost(
 	nanoid: string,
-	options?: Partial<UseQueryOptions<Post>>,
+	options?: Partial<UseQueryOptions<Post, ApiError>>,
 ) {
 	return useQuery({
 		queryKey: ["post", nanoid],
@@ -50,7 +50,7 @@ export function usePost(
 }
 
 export function useCreatePost(
-	options?: Partial<UseMutationOptions<Post, Error, InsertPost>>,
+	options?: Partial<UseMutationOptions<Post, ApiError, InsertPost>>,
 ) {
 	const queryClient = useQueryClient();
 	return useMutation({
@@ -67,7 +67,7 @@ export function useCreatePost(
 }
 
 export function useDeletePost(
-	options?: Partial<UseMutationOptions<boolean, Error, string>>,
+	options?: Partial<UseMutationOptions<boolean, ApiError, string>>,
 ) {
 	const queryClient = useQueryClient();
 	return useMutation({
@@ -89,7 +89,11 @@ export function useDeletePost(
 
 export function usePatchPost(
 	options?: Partial<
-		UseMutationOptions<Post, Error, { postData: PatchPost; postNanoid: string }>
+		UseMutationOptions<
+			Post,
+			ApiError,
+			{ postData: PatchPost; postNanoid: string }
+		>
 	>,
 ) {
 	const queryClient = useQueryClient();

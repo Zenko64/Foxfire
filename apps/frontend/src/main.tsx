@@ -4,8 +4,8 @@ import { createBrowserRouter, RouterProvider } from "react-router";
 import "./assets/css/main.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Layout } from "./components/Layout";
-import { Posts } from "./pages/Posts";
-import { Profile } from "./pages/Profile";
+import { PostsPage } from "./pages/Posts";
+import { ProfilePage } from "./pages/Profile";
 import { ThemeProvider } from "./providers/ThemeProvider";
 
 const queryClient = new QueryClient();
@@ -16,19 +16,19 @@ const router = createBrowserRouter([
 		children: [
 			{
 				index: true,
-				element: <Posts />,
+				element: <PostsPage />,
 			},
 			{
 				path: "/posts",
-				element: <Posts />,
+				element: <PostsPage />,
 			},
 			{
 				path: "/user",
-				element: <Profile />,
+				element: <ProfilePage />,
 			},
 			{
 				path: "/user/:username",
-				element: <Profile />,
+				element: <ProfilePage />,
 			},
 		],
 	},

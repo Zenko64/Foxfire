@@ -13,5 +13,3 @@ export function Layout() {
 		</>
 	);
 }
-
-export function ErrorBoundary() {}

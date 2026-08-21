@@ -26,7 +26,7 @@ import { useUser } from "@/hooks/users/queries";
 import { authClient } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 
-export function Profile() {
+export function ProfilePage() {
 	const nav = useNavigate();
 	const [searchParams, setSearchParams] = useSearchParams();
 
