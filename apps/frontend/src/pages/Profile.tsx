@@ -100,7 +100,7 @@ export function Profile() {
 		return <Navigate to={`/user/${session.user.username}`} replace />;
 	}
 
-	if (!data || error?.status === 404) {
+	if (error?.status === 404) {
 		return (
 			<div className="items-center justify-center flex flex-1 flex-col">
 				<Empty>
@@ -118,6 +118,7 @@ export function Profile() {
 		);
 	}
 
+	if (!data) return null;
 	return (
 		<div className="main-center flex flex-col">
 			<div className="flex flex-row p-8 justify-between">
