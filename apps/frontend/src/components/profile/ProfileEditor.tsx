@@ -147,12 +147,17 @@ export function ProfileEditDialog({
 				<DialogFooter className="flex flex-row items-center justify-end">
 					<DialogClose
 						render={
-							<Button className="w-1/4.5" variant="secondary" type="button">
+							<Button
+								className="w-1/4.5"
+								variant="secondary"
+								type="button"
+								disabled={isPending}
+							>
 								<X /> Cancel
 							</Button>
 						}
 					/>
-					<Button className="w-1/4.5" type="submit">
+					<Button className="w-1/4.5" type="submit" disabled={isPending}>
 						{isPending ? (
 							<>
 								<Spinner /> Updating...

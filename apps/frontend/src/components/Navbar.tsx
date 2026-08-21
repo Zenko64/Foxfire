@@ -38,24 +38,24 @@ export function Navbar() {
 			</span>
 			<span>
 				<Separator orientation="vertical" />
-				<DropdownMenu>
-					{!session?.session && (
-						<Dialog onOpenChange={setLoginDialogState} open={loginDialog}>
-							<DialogTrigger
-								render={
-									<Button
-										variant="ghost"
-										size="icon"
-										className="h-full w-auto aspect-square group"
-									>
-										<KeyIcon className="size-7.5 group-active:scale-95 group-hover:text-primary transition-all" />
-									</Button>
-								}
-							/>
-							<LoginDialog onSuccess={() => setLoginDialogState(false)} />
-						</Dialog>
-					)}
-					{session?.session && (
+				{!session?.session && (
+					<Dialog onOpenChange={setLoginDialogState} open={loginDialog}>
+						<DialogTrigger
+							render={
+								<Button
+									variant="ghost"
+									size="icon"
+									className="h-full w-auto aspect-square group"
+								>
+									<KeyIcon className="size-7.5 group-active:scale-95 group-hover:text-primary transition-all" />
+								</Button>
+							}
+						/>
+						<LoginDialog onSuccess={() => setLoginDialogState(false)} />
+					</Dialog>
+				)}
+				{session?.session && (
+					<DropdownMenu>
 						<DropdownMenuTrigger
 							render={
 								<Button
@@ -74,25 +74,25 @@ export function Navbar() {
 								</Button>
 							}
 						/>
-					)}
-					<DropdownMenuContent align="end" sideOffset={4} alignOffset={3}>
-						<DropdownMenuGroup>
-							<DropdownMenuItem onClick={() => nav("/user", {})}>
-								<User />
-								Profile
-							</DropdownMenuItem>
-						</DropdownMenuGroup>
-						<DropdownMenuGroup>
-							<DropdownMenuItem
-								variant="destructive"
-								onClick={() => authClient.signOut()}
-							>
-								<LogOut />
-								Logout
-							</DropdownMenuItem>
-						</DropdownMenuGroup>
-					</DropdownMenuContent>
-				</DropdownMenu>
+						<DropdownMenuContent align="end" sideOffset={4} alignOffset={3}>
+							<DropdownMenuGroup>
+								<DropdownMenuItem onClick={() => nav("/user", {})}>
+									<User />
+									Profile
+								</DropdownMenuItem>
+							</DropdownMenuGroup>
+							<DropdownMenuGroup>
+								<DropdownMenuItem
+									variant="destructive"
+									onClick={() => authClient.signOut()}
+								>
+									<LogOut />
+									Logout
+								</DropdownMenuItem>
+							</DropdownMenuGroup>
+						</DropdownMenuContent>
+					</DropdownMenu>
+				)}
 			</span>
 		</nav>
 	);
