@@ -1,4 +1,10 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+	type UseMutationOptions,
+	type UseQueryOptions,
+	useMutation,
+	useQuery,
+	useQueryClient,
+} from "@tanstack/react-query";
 import type { InferRequestType, InferResponseType } from "hono/client";
 import { client } from "@/lib/client";
 
@@ -8,7 +14,10 @@ type PatchPost = InferRequestType<
 	(typeof client.api.posts)[":nanoid"]["$patch"]
 >["json"];
 
-export function usePosts(params?: { query?: string; author?: string }) {
+export function usePosts(
+	params?: { query?: string; author?: string },
+	options?: Partial<UseQueryOptions<Post[]>>,
+) {
 	return useQuery({
 		queryKey: ["posts", params],
 		queryFn: async (): Promise<Post[]> => {
@@ -16,10 +25,14 @@ export function usePosts(params?: { query?: string; author?: string }) {
 			if (!data.ok) throw new Error(`Failed to fetch posts. ${data.status}`);
 			return data.json();
 		},
+		...options,
 	});
 }
 
-export function usePost(nanoid?: string) {
+export function usePost(
+	nanoid: string,
+	options?: Partial<UseQueryOptions<Post>>,
+) {
 	return useQuery({
 		queryKey: ["post", nanoid],
 		queryFn: async (): Promise<Post> => {
@@ -31,11 +44,13 @@ export function usePost(nanoid?: string) {
 			if (!data.ok) throw new Error(`Failed to fetch post. ${data.status}`);
 			return data.json();
 		},
-		enabled: Boolean(nanoid),
+		...options,
 	});
 }
 
-export function useCreatePost() {
+export function useCreatePost(
+	options?: Partial<UseMutationOptions<Post, Error, InsertPost>>,
+) {
 	const queryClient = useQueryClient();
 	return useMutation({
 		mutationFn: async (postData: InsertPost): Promise<Post> => {
@@ -43,15 +58,16 @@ export function useCreatePost() {
 			if (!data.ok) throw new Error(`Failed to create post. ${data.status}`);
 			return data.json();
 		},
-		onSuccess: (newData: Post) => {
-			queryClient.setQueriesData<Post[]>({ queryKey: ["posts"] }, (prev) =>
-				prev ? [newData, ...prev] : [newData],
-			);
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["posts"] });
 		},
+		...options,
 	});
 }
 
-export function useDeletePost() {
+export function useDeletePost(
+	options?: Partial<UseMutationOptions<boolean, Error, string>>,
+) {
 	const queryClient = useQueryClient();
 	return useMutation({
 		mutationFn: async (nanoid: string) => {
@@ -66,10 +82,15 @@ export function useDeletePost() {
 				prev?.filter((el) => el.nanoid !== nanoid),
 			);
 		},
+		...options,
 	});
 }
 
-export function usePatchPost() {
+export function usePatchPost(
+	options?: Partial<
+		UseMutationOptions<Post, Error, { postData: PatchPost; postNanoid: string }>
+	>,
+) {
 	const queryClient = useQueryClient();
 	return useMutation({
 		mutationFn: async (args: { postData: PatchPost; postNanoid: string }) => {
@@ -89,5 +110,6 @@ export function usePatchPost() {
 					) ?? [],
 			);
 		},
+		...options,
 	});
 }

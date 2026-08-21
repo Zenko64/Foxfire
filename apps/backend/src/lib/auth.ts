@@ -1,3 +1,4 @@
+import { authSchema } from "@foxfire/types";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { username } from "better-auth/plugins";
@@ -12,6 +13,10 @@ export const auth = betterAuth({
 		username({
 			minUsernameLength: 3,
 			maxUsernameLength: 30,
+			usernameValidator: (val) =>
+				authSchema.shape.username.safeParse(val).success,
+			displayUsernameValidator: (val) =>
+				authSchema.shape.displayUsername.safeParse(val).success,
 		}),
 	],
 	socialProviders: {

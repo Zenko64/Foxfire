@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { nanoid as mkNanoid } from "nanoid";
+import { NotFoundError } from "../src/lib/errors";
 import * as handler from "../src/posts/service";
 import { test } from "./lib/auth";
 import type { MockUser } from "./lib/types";
@@ -43,6 +44,7 @@ describe("Posting Module", () => {
 		const updatedPost = await handler.updatePost(
 			{ text: "Goodbye, World." },
 			{ nanoid: post!.nanoid },
+			mockUser.user!.id,
 		);
 
 		expect(post!.text === updatedPost!.text).toBeFalse();
@@ -55,9 +57,9 @@ describe("Posting Module", () => {
 			text: "Hello, World.",
 			nanoid,
 		});
-		await handler.deletePost({ nanoid: post!.nanoid });
-
-		const result = await handler.getPost({ nanoid: post!.nanoid });
-		expect(result).toBeUndefined();
+		await handler.deletePost({ nanoid: post!.nanoid }, mockUser.user!.id);
+		expect(handler.getPost({ nanoid: post!.nanoid })).rejects.toThrow(
+			NotFoundError,
+		);
 	});
 });

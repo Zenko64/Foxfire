@@ -14,20 +14,21 @@ import { cn } from "../lib/utils";
 export function Posts() {
 	const { data: session } = authClient.useSession();
 	const [searchParams] = useSearchParams();
+
 	// Post Data
-	const [search, setSearch] = useState(searchParams.get("search") ?? "");
+	const [search, setSearch] = useState("");
 	const { data: posts } = usePosts({ query: useDebounce(search, 300) });
-	useEffect(() => {
-		searchParams.set("search", search);
-	}, [search]);
 
 	// Shared Posts
-	const { data: sharedPost } = usePost(searchParams.get("id") ?? undefined);
+	const sharedPostId = searchParams.get("id");
+	const { data: sharedPost } = usePost(sharedPostId ?? "", {
+		enabled: Boolean(sharedPostId),
+	});
 
 	// Composer
 	const [showComposer, setShowComposer] = useState<boolean>(false);
 
-	// Mobile Optimizations for the composer
+	// Mobile Optimizations for the compose trigger
 	const [showComposerTrigger, setShowComposerTrigger] = useState<boolean>(true);
 	useEffect(() => {
 		const handleScroll = () => {
@@ -42,6 +43,7 @@ export function Posts() {
 		<div className="main-center">
 			<div className="flex flex-row justify-between items-center p-2">
 				<Input
+					value={search}
 					placeholder="Search posts..."
 					onChange={(e) => setSearch(e.target.value)}
 					className="w-full sm:w-1/3"
@@ -71,23 +73,22 @@ export function Posts() {
 			{sharedPost && (
 				<>
 					<div className="flex flex-col p-4 gap-2">
-						<PostCard postData={sharedPost} />
+						<PostCard postData={sharedPost} currentUid={session?.user.id} />
 					</div>
 					<Separator />
 				</>
 			)}
 
 			<div className="flex flex-col p-4 gap-2">
-				{posts?.map(
-					(p) =>
-						p.nanoid !== sharedPost?.nanoid && (
-							<PostCard
-								key={p.nanoid}
-								postData={p}
-								currentUid={session?.user.id}
-							/>
-						),
-				)}
+				{posts
+					?.filter((p) => p.nanoid !== sharedPost?.nanoid)
+					.map((p) => (
+						<PostCard
+							key={p.nanoid}
+							postData={p}
+							currentUid={session?.user.id}
+						/>
+					))}
 			</div>
 		</div>
 	);

@@ -18,7 +18,7 @@ export const postsTable = pgTable("posts", {
 		.notNull()
 		.references(() => user.id, { onDelete: "cascade" }),
 	nanoid: varchar("nanoid", { length: 21 }).notNull().unique(),
-	text: text("text").notNull(),
+	text: varchar("text", { length: 4000 }).notNull(),
 	pinned: boolean("pinned").notNull().default(false),
 	privacy: privacyEnum("privacy").notNull().default("public"),
 	createdAt: timestamp("created_at", { withTimezone: true })

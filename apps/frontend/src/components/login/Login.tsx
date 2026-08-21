@@ -1,8 +1,9 @@
+import { authSchema } from "@foxfire/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft, ArrowRight, Key } from "lucide-react";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import z, { email, string } from "zod";
+import type z from "zod";
 import { authClient } from "@/lib/auth";
 import { Button } from "../ui/button";
 import { Field, FieldError } from "../ui/field";
@@ -10,11 +11,9 @@ import { Spinner } from "../ui/spinner";
 import { toast } from "../ui/toast";
 import { Input } from "./ui";
 
-const formSchema = z.object({
-	email: email("Please enter a valid Email.")
-		.min(1, "Please enter an Email.")
-		.trim(),
-	password: string().min(1, "Please enter a password.").trim(),
+const formSchema = authSchema.pick({
+	email: true,
+	password: true,
 });
 
 export function Login({ onSuccess }: { onSuccess?: () => void }) {
