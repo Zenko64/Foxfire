@@ -13,37 +13,22 @@ import { cn } from "../lib/utils";
 
 export function Posts() {
 	const { data: session } = authClient.useSession();
-	const [searchParams, setSearchParams] = useSearchParams();
+	const [searchParams] = useSearchParams();
 
 	// Post Data
-	const [search, setSearch] = useState(searchParams.get("search") ?? "");
+	const [search, setSearch] = useState("");
 	const { data: posts } = usePosts({ query: useDebounce(search, 300) });
-	useEffect(() => {
-		setSearchParams(
-			(param) => {
-				if (search) {
-					param.set("search", search);
-					param.delete("id");
-				} else {
-					param.delete("search");
-				}
-				return param;
-			},
-			{ replace: true },
-		);
-	}, [search]);
-
-	const sharedPostId = searchParams.get("id");
 
 	// Shared Posts
+	const sharedPostId = searchParams.get("id");
 	const { data: sharedPost } = usePost(sharedPostId ?? "", {
-		enabled: sharedPostId !== null,
+		enabled: Boolean(sharedPostId),
 	});
 
 	// Composer
 	const [showComposer, setShowComposer] = useState<boolean>(false);
 
-	// Mobile Optimizations for the composer
+	// Mobile Optimizations for the compose trigger
 	const [showComposerTrigger, setShowComposerTrigger] = useState<boolean>(true);
 	useEffect(() => {
 		const handleScroll = () => {

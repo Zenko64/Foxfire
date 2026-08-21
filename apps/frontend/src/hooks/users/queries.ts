@@ -1,5 +1,5 @@
 import { type UseQueryOptions, useQuery } from "@tanstack/react-query";
-import type { InferResponseType } from "hono";
+import type { InferResponseType } from "hono/client";
 import { client } from "@/lib/client";
 
 export type User = InferResponseType<

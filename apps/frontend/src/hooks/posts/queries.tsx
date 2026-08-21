@@ -58,10 +58,8 @@ export function useCreatePost(
 			if (!data.ok) throw new Error(`Failed to create post. ${data.status}`);
 			return data.json();
 		},
-		onSuccess: (newData: Post) => {
-			queryClient.setQueriesData<Post[]>({ queryKey: ["posts"] }, (prev) =>
-				prev ? [newData, ...prev] : [newData],
-			);
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["posts"] });
 		},
 		...options,
 	});

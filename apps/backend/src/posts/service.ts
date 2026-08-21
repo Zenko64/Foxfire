@@ -129,7 +129,7 @@ export async function createPost(
 
 		if (!result)
 			throw new InternalError(
-				"An unknown error has occured while retrieving the created post.",
+				"An unknown error has occurredwhile retrieving the created post.",
 			);
 		return result;
 	});

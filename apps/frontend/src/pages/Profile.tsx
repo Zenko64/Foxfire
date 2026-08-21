@@ -10,7 +10,11 @@ export function Profile() {
 	// Account data
 	const { username: usernameParam } = useParams();
 	const { data: session } = authClient.useSession();
-	const { data } = useUser(usernameParam ?? session?.user.username ?? "");
+
+	const profileUsername = usernameParam ?? session?.user.username;
+	const { data } = useUser(profileUsername ?? "", {
+		enabled: Boolean(profileUsername),
+	});
 
 	// Account content
 	const { data: posts } = usePosts(
@@ -23,7 +27,7 @@ export function Profile() {
 
 	// Shared Posts
 	const { data: sharedPost } = usePost(sharedPostId ?? "", {
-		enabled: sharedPostId !== null,
+		enabled: Boolean(sharedPostId),
 	});
 
 	return (

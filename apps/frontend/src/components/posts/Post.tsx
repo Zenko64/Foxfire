@@ -57,7 +57,7 @@ export function PostCard({
 			</div>
 
 			<div className="flex flex-row items-center border-t justify-between gap-2 px-2 py-2 bg-transparent">
-				<span className="flex flex-row justify-center items-center gap-2">
+				<span className="flex flex-row justify-center items-center gap-2.5">
 					<Button
 						variant="ghost"
 						className="flex flex-row justify-center items-center gap-1 p-1"
@@ -76,7 +76,7 @@ export function PostCard({
 					</Button>
 					{(postData.author.id === currentUid ||
 						postData.privacy === "unlisted") && (
-						<p className="flex flex-row gap-1 text-xs text-muted items-center">
+						<p className="flex flex-row gap-1 text-xs text-muted-foreground items-center">
 							{
 								privacyLabels
 									.filter((f) => !(f.value === "public"))
