@@ -118,6 +118,24 @@ export function Profile() {
 		);
 	}
 
+	if (error && !data) {
+		return (
+			<div className="items-center justify-center flex flex-1 flex-col">
+				<Empty>
+					<EmptyHeader>
+						<EmptyMedia>
+							<BanIcon />
+						</EmptyMedia>
+						<EmptyTitle>Error</EmptyTitle>
+						<EmptyDescription>
+							Failed to load user. Please try again.
+						</EmptyDescription>
+					</EmptyHeader>
+				</Empty>
+			</div>
+		);
+	}
+
 	if (!data) return null;
 	return (
 		<div className="main-center flex flex-col">
