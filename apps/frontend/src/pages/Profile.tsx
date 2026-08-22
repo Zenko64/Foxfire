@@ -13,6 +13,7 @@ import {
 	EmptyTitle,
 } from "@/components/ui/empty";
 import { Separator } from "@/components/ui/separator";
+import { Spinner } from "@/components/ui/spinner";
 import { useUser } from "@/hooks/users/queries";
 import { authClient } from "@/lib/auth";
 
@@ -26,28 +27,34 @@ export function ProfilePage() {
 	// Account data
 	const { data: session, isPending } = authClient.useSession();
 	const profileUsername = usernamePathParam ?? session?.user.username;
-	const { data, error } = useUser(profileUsername ?? "");
+	const { data, error, isFetching } = useUser(profileUsername ?? "");
 
 	const isOwner = session?.user.username === data?.username;
 
-	if (!usernamePathParam) {
-		if (isPending) return null;
-		if (!session)
-			return (
-				<div className="items-center justify-center flex flex-1 flex-col">
-					<Empty>
-						<EmptyHeader>
-							<EmptyMedia>
-								<BanIcon />
-							</EmptyMedia>
-							<EmptyTitle>Unauthorized</EmptyTitle>
-							<EmptyDescription>
-								You need an account to access this page.
-							</EmptyDescription>
-						</EmptyHeader>
-					</Empty>
-				</div>
-			);
+	if (isPending || isFetching)
+		return (
+			<div className="items-center justify-center flex flex-1 flex-row gap-2">
+				<Spinner /> Loading...
+			</div>
+		);
+
+	if (!session && !usernamePathParam) {
+		return (
+			<div className="items-center justify-center flex flex-1 flex-col">
+				<Empty>
+					<EmptyHeader>
+						<EmptyMedia>
+							<BanIcon />
+						</EmptyMedia>
+						<EmptyTitle>Unauthorized</EmptyTitle>
+						<EmptyDescription>
+							You need an account to access this page.
+						</EmptyDescription>
+					</EmptyHeader>
+				</Empty>
+			</div>
+		);
+	} else if (session && !usernamePathParam) {
 		return <Navigate to={`/user/${session.user.username}`} replace />;
 	}
 
@@ -87,7 +94,6 @@ export function ProfilePage() {
 		);
 	}
 
-	if (!data) return null;
 	return (
 		<div className="main-center flex flex-col">
 			<div className="flex flex-row p-8 justify-between">
