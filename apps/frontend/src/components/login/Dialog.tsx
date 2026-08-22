@@ -1,8 +1,5 @@
-import { GalleryVerticalEnd } from "lucide-react";
+import { GalleryVerticalEnd, HatGlasses } from "lucide-react";
 import { useState } from "react";
-import DiscordLogo from "@/assets/svg/discord.svg?react";
-import GithubLogo from "@/assets/svg/github.svg?react";
-import GoogleLogo from "@/assets/svg/google.svg?react";
 import { Button } from "@/components/ui/button";
 import {
 	DialogContent,
@@ -15,9 +12,14 @@ import {
 	FieldGroup,
 	FieldSeparator,
 } from "@/components/ui/field";
+import { authClient } from "@/lib/auth";
 import { toast } from "../ui/toast";
 import { Login } from "./Login";
 import { Register } from "./Register";
+
+// import DiscordLogo from "@/assets/svg/discord.svg?react";
+// import GithubLogo from "@/assets/svg/github.svg?react";
+// import GoogleLogo from "@/assets/svg/google.svg?react";
 
 export function LoginDialog({ onSuccess }: { onSuccess: () => void }) {
 	const [action, setAction] = useState<"register" | "auth">("auth");
@@ -28,6 +30,17 @@ export function LoginDialog({ onSuccess }: { onSuccess: () => void }) {
 	const onRegisterSuccess = () => {
 		toast.add({ type: "success", title: "Successfully signed up." });
 		onSuccess();
+	};
+
+	const anonLogin = async () => {
+		const { error } = await authClient.signIn.anonymous();
+		if (error) {
+			toast.add({
+				type: "error",
+				title: "Failed to login anonymously.",
+				description: error.message,
+			});
+		}
 	};
 
 	return (
@@ -75,24 +88,29 @@ export function LoginDialog({ onSuccess }: { onSuccess: () => void }) {
 				{action === "register" && <Register onSuccess={onRegisterSuccess} />}
 
 				<FieldSeparator>Or</FieldSeparator>
-				<SocialProviders />
+
+				<Field className="grid gap-4 sm:grid-cols-1">
+					<Button variant="outline" type="button" onClick={anonLogin}>
+						<HatGlasses /> Anonymous
+					</Button>
+				</Field>
 			</FieldGroup>
 		</DialogContent>
 	);
 }
 
-function SocialProviders() {
-	return (
-		<Field className="grid gap-4 sm:grid-cols-3">
-			<Button variant="outline" type="button">
-				<GoogleLogo />
-			</Button>
-			<Button variant="outline" type="button">
-				<GithubLogo />
-			</Button>
-			<Button variant="outline" type="button">
-				<DiscordLogo />
-			</Button>
-		</Field>
-	);
-}
+// function SocialProviders() {
+// 	return (
+// 		<Field className="grid gap-4 sm:grid-cols-3">
+// 			<Button variant="outline" type="button">
+// 				<GoogleLogo />
+// 			</Button>
+// 			<Button variant="outline" type="button">
+// 				<GithubLogo />
+// 			</Button>
+// 			<Button variant="outline" type="button">
+// 				<DiscordLogo />
+// 			</Button>
+// 		</Field>
+// 	);
+// }

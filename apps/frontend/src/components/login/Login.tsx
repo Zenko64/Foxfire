@@ -24,7 +24,7 @@ export function Login({ onSuccess }: { onSuccess?: () => void }) {
 		defaultValues: { email: "", password: "" },
 	});
 
-	async function onSubmit(e: React.SubmitEvent) {
+	const onSubmit = async (e: React.SubmitEvent) => {
 		e.preventDefault();
 
 		if (step === "email") {
@@ -58,7 +58,7 @@ export function Login({ onSuccess }: { onSuccess?: () => void }) {
 		}
 
 		onSuccess?.();
-	}
+	};
 
 	const Email = () => (
 		<Controller

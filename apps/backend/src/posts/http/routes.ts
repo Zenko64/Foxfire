@@ -1,3 +1,9 @@
+/**
+ * @name Posts HTTP Routes
+ * @module posts/http
+ * @file posts/http/routes.ts
+ * @description Provides access to the posts service thru HTTP.
+ */
 import { postSchema } from "@foxfire/types";
 import { zValidator } from "@hono/zod-validator";
 import { eq } from "drizzle-orm";
@@ -33,7 +39,7 @@ const postsRouter = factory
 						query,
 						authorId,
 					},
-					c.var.user?.id ?? undefined,
+					c.var.user?.id,
 				),
 			);
 		},
@@ -41,9 +47,7 @@ const postsRouter = factory
 	.get("/:nanoid", async (c) => {
 		const nanoid = c.req.param("nanoid");
 
-		return c.json(
-			await handlers.getPost({ nanoid }, c.var.user?.id ?? undefined),
-		);
+		return c.json(await handlers.getPost({ nanoid }, c.var.user?.id));
 	})
 	.post("/", requireAuth, zValidator("json", postSchema), async (c) => {
 		const data = c.req.valid("json");
@@ -62,9 +66,7 @@ const postsRouter = factory
 		async (c) => {
 			const data = c.req.valid("json");
 			const nanoid = c.req.param("nanoid");
-			return c.json(
-				await handlers.updatePost({ ...data }, { nanoid }, c.var.user.id),
-			);
+			return c.json(await handlers.updatePost(data, { nanoid }, c.var.user.id));
 		},
 	)
 	.delete("/:nanoid", requireAuth, async (c) => {
