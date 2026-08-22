@@ -6,7 +6,7 @@ import db from "./db";
 
 const auth = betterAuth({
 	database: drizzleAdapter(db, { provider: "pg", schema }),
-	baseURL: process.env.BETTER_AUTH_URL!,
+	baseURL: process.env.APP_URL,
 	emailAndPassword: { enabled: true },
 	plugins: [
 		username({
@@ -15,20 +15,6 @@ const auth = betterAuth({
 		}),
 		testUtils(),
 	],
-	socialProviders: {
-		discord: {
-			clientId: process.env.DISCORD_CLIENT_ID!,
-			clientSecret: process.env.DISCORD_CLIENT_SECRET!,
-		},
-		github: {
-			clientId: process.env.GITHUB_CLIENT_ID!,
-			clientSecret: process.env.GITHUB_CLIENT_SECRET!,
-		},
-		google: {
-			clientId: process.env.GOOGLE_CLIENT_ID!,
-			clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-		},
-	},
 	user: {
 		deleteUser: {
 			enabled: true,
