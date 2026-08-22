@@ -97,6 +97,7 @@ export function useDeletePost(
 			queryClient.setQueriesData<Post[]>({ queryKey: ["posts"] }, (prev) =>
 				prev?.filter((el) => el.nanoid !== nanoid),
 			);
+			queryClient.removeQueries({ queryKey: ["post", nanoid] });
 		},
 		onError: (err) => {
 			toast.add({
@@ -137,6 +138,7 @@ export function usePatchPost(
 						p.nanoid === updatedPost.nanoid ? updatedPost : p,
 					) ?? [],
 			);
+			queryClient.setQueryData(["post", updatedPost.nanoid], updatedPost);
 		},
 		onError: (err) => {
 			toast.add({
