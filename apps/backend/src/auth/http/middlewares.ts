@@ -7,7 +7,7 @@
 import { createMiddleware } from "hono/factory";
 import type { AppEnv } from "../../core/http/factory";
 import { auth } from "../../lib/auth";
-import { UnauthorizedError } from "../../lib/errors";
+import { ForbiddenError, UnauthorizedError } from "../../lib/errors";
 
 /**
  * @name requireAuth
@@ -38,6 +38,26 @@ export const attachAuth = createMiddleware(async (c, next) => {
 	if (session) {
 		c.set("user", session.user);
 		c.set("session", session.session);
+	}
+
+	return next();
+});
+
+/**
+ * @name requireSetup
+ * @description requireSetup forces the caller (logged in) to have finished the account setup before proceeding.
+ */
+export const requireSetup = createMiddleware(async (c, next) => {
+	const session = await auth.api.getSession({
+		headers: c.req.raw.headers,
+	});
+	if (
+		session?.user &&
+		(!session?.user.username || !session.user.displayUsername)
+	) {
+		throw new ForbiddenError(
+			"You are required to complete the setup before accessing this resource.",
+		);
 	}
 
 	return next();

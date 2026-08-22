@@ -21,8 +21,8 @@ const postRelCols = {
 
 /**
  * @name getPosts
- * @description Queries The Posts Table.
- * @param { query, authorId } - Filters.
+ * @description Query posts from the posts table.
+ * @param { query, authorId } - Filters
  * @param userId - Logged In UserID, to return private user data.
  * @returns
  */
@@ -32,17 +32,18 @@ export async function getPosts(
 ) {
 	return db.query.postsTable.findMany({
 		where: (r) => {
-			const conditions = [
-				or(
-					eq(r.privacy, "public"),
-					userId ? eq(r.authorId, userId) : undefined,
-				),
-			];
-
+			const conditions = [];
 			if (query) conditions.push(ilike(r.text, `%${query}%`));
 			if (authorId) conditions.push(eq(r.authorId, authorId));
 
-			return and(...conditions);
+			return and(
+				...conditions,
+				or(
+					// Visibility Filter
+					eq(r.privacy, "public"),
+					userId ? eq(r.authorId, userId) : undefined,
+				),
+			);
 		},
 		columns: {
 			createdAt: true,
@@ -68,13 +69,7 @@ export async function getPost(
 ) {
 	const data = await db.query.postsTable.findFirst({
 		where: (r) => {
-			const conditions = [
-				or(
-					eq(r.privacy, "public"),
-					eq(r.privacy, "unlisted"),
-					userId ? eq(r.authorId, userId) : undefined,
-				),
-			];
+			const conditions = [];
 
 			if (postId.id) conditions.push(eq(r.id, postId.id));
 			if (postId.nanoid) conditions.push(eq(r.nanoid, postId.nanoid));
@@ -83,7 +78,14 @@ export async function getPost(
 					"The post to retrieve was not specified in the request payload.",
 				);
 
-			return and(...conditions);
+			return and(
+				or(
+					eq(r.privacy, "public"),
+					eq(r.privacy, "unlisted"),
+					userId ? eq(r.authorId, userId) : undefined,
+				),
+				...conditions,
+			);
 		},
 		columns: {
 			createdAt: true,
@@ -98,6 +100,12 @@ export async function getPost(
 	return data;
 }
 
+/**
+ * @name createPost
+ * @description Creates a post
+ * @param postData
+ * @returns
+ */
 export async function createPost(
 	postData: Omit<
 		typeof postsTable.$inferInsert,
@@ -129,12 +137,20 @@ export async function createPost(
 
 		if (!result)
 			throw new InternalError(
-				"An unknown error has occurredwhile retrieving the created post.",
+				"An unknown error has occurred while retrieving the created post.",
 			);
 		return result;
 	});
 }
 
+/**
+ * @name updatePost
+ * @description Updates a post
+ * @param postData
+ * @param postId - The post to updates
+ * @param userId - The authenticated user id.
+ * @returns
+ */
 export async function updatePost(
 	postData: Partial<
 		Pick<typeof postsTable.$inferInsert, "text" | "privacy" | "pinned">
@@ -199,6 +215,13 @@ export async function updatePost(
 	});
 }
 
+/**
+ * @name deletePost
+ * @description Deletes a post
+ * @param postId - Post to delete
+ * @param userId - Post owner
+ * @returns {QueryResult<never>}
+ */
 export async function deletePost(
 	postId: Partial<Pick<typeof postsTable.$inferSelect, "id" | "nanoid">>,
 	userId: string,

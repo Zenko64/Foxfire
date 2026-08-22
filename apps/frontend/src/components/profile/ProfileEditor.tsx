@@ -90,7 +90,12 @@ export function ProfileEditDialog({
 							render={({ field, fieldState }) => (
 								<Field data-invalid={fieldState.invalid} className="gap-0.5">
 									<FieldLabel htmlFor={field.name}>Full Name</FieldLabel>
-									<Input {...field} id={field.name} placeholder="Full Name" />
+									<Input
+										{...field}
+										id={field.name}
+										disabled={isPending}
+										placeholder="Full Name"
+									/>
 									{fieldState.invalid && (
 										<FieldError errors={[fieldState.error]} />
 									)}
@@ -107,6 +112,7 @@ export function ProfileEditDialog({
 										<Input
 											{...field}
 											id={field.name}
+											disabled={isPending}
 											placeholder="Display Name"
 										/>
 										{fieldState.invalid && (
@@ -131,6 +137,7 @@ export function ProfileEditDialog({
 											<Input
 												{...field}
 												id={field.name}
+												disabled={isPending}
 												placeholder="Username"
 												className="text-muted-foreground pl-4"
 											/>
@@ -147,12 +154,17 @@ export function ProfileEditDialog({
 				<DialogFooter className="flex flex-row items-center justify-end">
 					<DialogClose
 						render={
-							<Button className="w-1/4.5" variant="secondary" type="button">
+							<Button
+								className="w-1/4.5"
+								variant="secondary"
+								type="button"
+								disabled={isPending}
+							>
 								<X /> Cancel
 							</Button>
 						}
 					/>
-					<Button className="w-1/4.5" type="submit">
+					<Button className="w-1/4.5" type="submit" disabled={isPending}>
 						{isPending ? (
 							<>
 								<Spinner /> Updating...

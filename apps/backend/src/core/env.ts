@@ -18,9 +18,9 @@ const envSchema = z.object({
 	DATABASE_URL: z
 		.string()
 		.min(1, "The PostgreSQL Connection URL Is Missing In The .env"),
-	REDIS_URL: z
-		.string()
-		.min(1, "The Redis Connection URL Is Missing In The .env"),
+	//	REDIS_URL: z
+	//		.string()
+	//		.min(1, "The Redis Connection URL Is Missing In The .env"),
 	APP_URL: z.string().min(1, "The App URL Is Missing."),
 	NODE_ENV: z
 		.enum(["development", "production", "test"])

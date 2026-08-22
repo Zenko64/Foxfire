@@ -23,7 +23,7 @@ export function Register({ onSuccess }: { onSuccess?: () => void }) {
 		defaultValues: { email: "", password: "", name: "", username: "" },
 	});
 
-	async function onSubmit(e: React.SubmitEvent) {
+	const onSubmit = async (e: React.SubmitEvent) => {
 		e.preventDefault();
 		if (step === 0) {
 			if (await form.trigger("email")) setStep(1);
@@ -60,7 +60,7 @@ export function Register({ onSuccess }: { onSuccess?: () => void }) {
 			return;
 		}
 		onSuccess?.();
-	}
+	};
 
 	const Email = () => (
 		<Controller
@@ -122,6 +122,7 @@ export function Register({ onSuccess }: { onSuccess?: () => void }) {
 						<Input
 							{...field}
 							id={field.name}
+							disabled={isPending}
 							type="text"
 							placeholder="Full Name"
 							isInvalid={fieldState.invalid}
@@ -146,6 +147,7 @@ export function Register({ onSuccess }: { onSuccess?: () => void }) {
 							<Input
 								{...field}
 								id={field.name}
+								disabled={isPending}
 								type="text"
 								placeholder="Username"
 								isInvalid={fieldState.invalid}

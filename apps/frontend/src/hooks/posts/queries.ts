@@ -6,6 +6,7 @@ import {
 	useQueryClient,
 } from "@tanstack/react-query";
 import type { InferRequestType, InferResponseType } from "hono/client";
+import { toast } from "@/components/ui/toast";
 import { client } from "@/lib/client";
 import { ApiError } from "@/lib/errors";
 
@@ -17,7 +18,7 @@ type PatchPost = InferRequestType<
 
 export function usePosts(
 	params?: { query?: string; author?: string },
-	options?: Partial<UseQueryOptions<Post[]>>,
+	options?: Partial<UseQueryOptions<Post[], ApiError>>,
 ) {
 	return useQuery({
 		queryKey: ["posts", params],
@@ -31,8 +32,8 @@ export function usePosts(
 }
 
 export function usePost(
-	nanoid: string,
-	options?: Partial<UseQueryOptions<Post>>,
+	nanoid?: string,
+	options?: Partial<UseQueryOptions<Post, ApiError>>,
 ) {
 	return useQuery({
 		queryKey: ["post", nanoid],
@@ -43,14 +44,16 @@ export function usePost(
 				param: { nanoid },
 			});
 			if (!data.ok) throw new ApiError("Failed to fetch post.", data.status);
+
 			return data.json();
 		},
+		enabled: Boolean(nanoid),
 		...options,
 	});
 }
 
 export function useCreatePost(
-	options?: Partial<UseMutationOptions<Post, Error, InsertPost>>,
+	options?: Partial<UseMutationOptions<Post, ApiError, InsertPost>>,
 ) {
 	const queryClient = useQueryClient();
 	return useMutation({
@@ -62,12 +65,19 @@ export function useCreatePost(
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["posts"] });
 		},
+		onError: (err) => {
+			toast.add({
+				type: "error",
+				title: "Failed to create post.",
+				description: err.message,
+			});
+		},
 		...options,
 	});
 }
 
 export function useDeletePost(
-	options?: Partial<UseMutationOptions<boolean, Error, string>>,
+	options?: Partial<UseMutationOptions<boolean, ApiError, string>>,
 ) {
 	const queryClient = useQueryClient();
 	return useMutation({
@@ -83,13 +93,24 @@ export function useDeletePost(
 				prev?.filter((el) => el.nanoid !== nanoid),
 			);
 		},
+		onError: (err) => {
+			toast.add({
+				type: "error",
+				title: "Failed to delete post.",
+				description: err.message,
+			});
+		},
 		...options,
 	});
 }
 
 export function usePatchPost(
 	options?: Partial<
-		UseMutationOptions<Post, Error, { postData: PatchPost; postNanoid: string }>
+		UseMutationOptions<
+			Post,
+			ApiError,
+			{ postData: PatchPost; postNanoid: string }
+		>
 	>,
 ) {
 	const queryClient = useQueryClient();
@@ -110,6 +131,13 @@ export function usePatchPost(
 						p.nanoid === updatedPost.nanoid ? updatedPost : p,
 					) ?? [],
 			);
+		},
+		onError: (err) => {
+			toast.add({
+				type: "error",
+				title: "Failed to update post.",
+				description: err.message,
+			});
 		},
 		...options,
 	});
