@@ -7,6 +7,7 @@
 import { relations } from "drizzle-orm";
 import {
 	boolean,
+	index,
 	integer,
 	pgEnum,
 	pgTable,
@@ -18,22 +19,30 @@ import { user } from "./auth-schema";
 
 export const privacyEnum = pgEnum("privacy", ["public", "unlisted", "private"]);
 
-export const postsTable = pgTable("posts", {
-	id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-	authorId: text("author_id")
-		.notNull()
-		.references(() => user.id, { onDelete: "cascade" }),
-	nanoid: varchar("nanoid", { length: 21 }).notNull().unique(),
-	text: varchar("text", { length: 4000 }).notNull(),
-	pinned: boolean("pinned").notNull().default(false),
-	privacy: privacyEnum("privacy").notNull().default("public"),
-	createdAt: timestamp("created_at", { withTimezone: true })
-		.defaultNow()
-		.notNull(),
-	updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
-		() => new Date(),
-	),
-});
+export const postsTable = pgTable(
+	"posts",
+	{
+		id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+		authorId: text("author_id")
+			.notNull()
+			.references(() => user.id, { onDelete: "cascade" }),
+		nanoid: varchar("nanoid", { length: 21 }).notNull().unique(),
+		text: varchar("text", { length: 4000 }).notNull(),
+		pinned: boolean("pinned").notNull().default(false),
+		privacy: privacyEnum("privacy").notNull().default("public"),
+		createdAt: timestamp("created_at", { withTimezone: true })
+			.defaultNow()
+			.notNull(),
+		updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
+			() => new Date(),
+		),
+	},
+	(t) => [
+		index().on(t.authorId),
+		index().on(t.createdAt.desc(), t.id.desc()),
+		index().on(t.privacy),
+	],
+);
 
 export const postUserRelations = relations(postsTable, ({ one }) => ({
 	author: one(user, { fields: [postsTable.authorId], references: [user.id] }),

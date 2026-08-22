@@ -30,7 +30,14 @@ export const requireAuth = createMiddleware<
  * @name attachAuth
  * @description attachAuth attaches user and session context data from the request that can be read by middlewares and handlers if they exist.
  */
-export const attachAuth = createMiddleware(async (c, next) => {
+export const attachAuth = createMiddleware<
+	AppEnv & {
+		Variables: {
+			session: typeof auth.$Infer.Session.session | null;
+			user: typeof auth.$Infer.Session.user | null;
+		};
+	}
+>(async (c, next) => {
 	const session = await auth.api.getSession({
 		headers: c.req.raw.headers,
 	});
@@ -47,14 +54,15 @@ export const attachAuth = createMiddleware(async (c, next) => {
  * @name requireSetup
  * @description requireSetup forces the caller (logged in) to have finished the account setup before proceeding.
  */
-export const requireSetup = createMiddleware(async (c, next) => {
-	const session = await auth.api.getSession({
-		headers: c.req.raw.headers,
-	});
-	if (
-		session?.user &&
-		(!session?.user.username || !session.user.displayUsername)
-	) {
+export const requireSetup = createMiddleware<
+	AppEnv & {
+		Variables: {
+			session: typeof auth.$Infer.Session.session | null;
+			user: typeof auth.$Infer.Session.user | null;
+		};
+	}
+>(async (c, next) => {
+	if (c.var.user && (!c.var.user.username || !c.var.user.displayUsername)) {
 		throw new ForbiddenError(
 			"You are required to complete the setup before accessing this resource.",
 		);

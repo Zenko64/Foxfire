@@ -45,6 +45,7 @@ export async function getPosts(
 				),
 			);
 		},
+		orderBy: (r, { desc }) => [desc(r.createdAt), desc(r.id)],
 		columns: {
 			createdAt: true,
 			nanoid: true,
@@ -260,5 +261,5 @@ export async function deletePost(
 		}
 	}
 
-	return result;
+	return { sucesss: true };
 }
