@@ -10,6 +10,8 @@
 			"persistent": true
 		},
 		"typecheck": {},
-		"test": {}
+		"test": {
+			"env": ["APP_URL"]
+		}
 	}
 }
