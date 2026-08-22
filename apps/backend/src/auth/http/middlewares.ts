@@ -47,7 +47,7 @@ export const attachAuth = createMiddleware(async (c, next) => {
  * @name requireSetup
  * @description requireSetup forces the caller to have finished the account setup before proceeding.
  */
-export const requireOnboard = createMiddleware(async (c, next) => {
+export const requireSetup = createMiddleware(async (c, next) => {
 	const session = await auth.api.getSession({
 		headers: c.req.raw.headers,
 	});
