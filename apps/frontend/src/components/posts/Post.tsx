@@ -4,7 +4,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import { Edit, Menu, Share, Trash, User } from "lucide-react";
 import { useNavigate } from "react-router";
 import type { Post } from "@/hooks/posts/queries";
-import { useDeletePost } from "../../hooks/posts/queries";
+import type { PrivacyLevel } from "@/types";
 import { privacyLabels } from "../constants/Privacy";
 import { Button } from "../ui/button";
 import {
@@ -14,67 +14,41 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { Spinner } from "../ui/spinner";
-import { toast } from "../ui/toast";
 
 dayjs.extend(relativeTime);
 dayjs.extend(isToday);
 
 export function PostCard({
 	postData,
-	currentUid,
+	showPrivacyLevels,
+	showCreatedAt,
+	onShare,
 	onEdit,
+	onDelete,
 }: {
 	postData: Post;
-	currentUid?: string;
-	onEdit: (post: Post) => void;
+	showPrivacyLevels?: PrivacyLevel[];
+	showCreatedAt?: boolean;
+	onShare?: (postId: string) => void;
+	onEdit?: (post: Post) => void;
+	onDelete?: (postId: string) => void;
 }) {
 	const nav = useNavigate();
-	const { mutate: mutDel, isPending: isPendingDel } = useDeletePost();
-
-	const deletePost = (nanoid: string) => {
-		mutDel(nanoid, {
-			onError: () =>
-				toast.add({ title: "Failed to delete post.", type: "error" }),
-		});
-	};
-
-	const sharePost = () => {
-		const postUrl = new URL(window.location.origin);
-		postUrl.pathname = "/posts";
-		postUrl.searchParams.set("id", postData.nanoid);
-		navigator.clipboard
-			.writeText(postUrl.toString())
-			.catch(() =>
-				toast.add({
-					type: "error",
-					title: "Failed to copy post to clipboard.",
-					description: "Unable to access the clipboard.",
-				}),
-			)
-			.then(() =>
-				toast.add({ type: "success", title: "Copied post link to clipboard." }),
-			);
-	};
 
 	return (
 		<div className=" min-w-full w-full h-full min-h-40 bg-card border flex flex-col">
 			<div className="flex-1 flex flex-col min-h-0">
-				{isPendingDel ? (
-					<div className="bg-neutral-800/2 backdrop-blur-sm h-full w-full flex flex-1 flex-row gap-2 justify-center items-center">
-						<Spinner /> Deleting...
-					</div>
-				) : (
-					<div className="flex-1 p-4">{postData.text}</div>
-				)}
+				<div className="flex-1 p-4">{postData.text}</div>
 			</div>
-
 			<div className="flex flex-row items-center border-t justify-between gap-2 px-2 py-2 bg-transparent">
 				<span className="flex flex-row justify-center items-center gap-2.5">
 					<Button
 						variant="ghost"
 						className="flex flex-row justify-center items-center gap-1 p-1"
-						onClick={() => nav(`/user/${postData.author.username}`)}
+						onClick={() =>
+							!window.location.pathname.startsWith("/user") &&
+							nav(`/user/${postData.author.username}`)
+						}
 					>
 						{postData.author.image ? (
 							<img
@@ -87,23 +61,23 @@ export function PostCard({
 						)}
 						<p>{postData.author.displayUsername}</p>
 					</Button>
-					{(postData.author.id === currentUid ||
+					{/*// ? If the post is unlisted, the viewer must know it at all times, regardless of the showPrivacyLevels set (usually author-exclusive) //*/}
+					{(showPrivacyLevels?.includes(postData.privacy) ||
 						postData.privacy === "unlisted") && (
 						<p className="flex flex-row gap-1 text-xs text-muted-foreground items-center">
-							{
-								privacyLabels
-									.filter((f) => !(f.value === "public"))
-									.find((pl) => pl.value === postData.privacy)?.label
-							}
+							{privacyLabels.find((pl) => pl.value === postData.privacy)?.label}
 						</p>
 					)}
 				</span>
 				<span className="flex flex-row justify-center items-center gap-4">
-					<p className="flex flex-row gap-1 text-xs text-muted-foreground items-center">
-						{dayjs(postData.createdAt).isToday()
-							? dayjs(postData.createdAt).fromNow()
-							: dayjs(postData.createdAt).toDate().toLocaleDateString()}
-					</p>
+					{/* Display date posted */}
+					{showCreatedAt && (
+						<p className="flex flex-row gap-1 text-xs text-muted-foreground items-center">
+							{dayjs(postData.createdAt).isToday()
+								? dayjs(postData.createdAt).fromNow()
+								: dayjs(postData.createdAt).toDate().toLocaleDateString()}
+						</p>
+					)}
 					<DropdownMenu>
 						<DropdownMenuTrigger
 							render={(props) => (
@@ -114,25 +88,30 @@ export function PostCard({
 						/>
 						<DropdownMenuContent align="end">
 							<DropdownMenuGroup>
-								<DropdownMenuItem onClick={() => sharePost()}>
-									<Share /> Share
-								</DropdownMenuItem>
+								{onShare && (
+									<DropdownMenuItem onClick={() => onShare(postData.nanoid)}>
+										<Share /> Share
+									</DropdownMenuItem>
+								)}
 							</DropdownMenuGroup>
-							{currentUid === postData.author.id && (
-								<DropdownMenuGroup>
+							<DropdownMenuGroup>
+								{onEdit && (
 									<DropdownMenuItem onClick={() => onEdit(postData)}>
 										<Edit />
 										Edit Post
 									</DropdownMenuItem>
+								)}
+
+								{onDelete && (
 									<DropdownMenuItem
 										variant="destructive"
-										onClick={() => deletePost(postData.nanoid)}
+										onClick={() => onDelete(postData.nanoid)}
 									>
 										<Trash />
 										Delete
 									</DropdownMenuItem>
-								</DropdownMenuGroup>
-							)}
+								)}
+							</DropdownMenuGroup>
 						</DropdownMenuContent>
 					</DropdownMenu>
 				</span>

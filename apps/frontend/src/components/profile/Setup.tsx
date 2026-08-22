@@ -20,9 +20,8 @@ import { Spinner } from "../ui/spinner";
 import { toast } from "../ui/toast";
 
 const schema = authSchema.pick({ username: true, displayUsername: true });
-const inputData = schema.nullish();
 
-export function SetupScreen({ data }: { data?: z.infer<typeof inputData> }) {
+export function SetupScreen({ data }: { data?: z.infer<typeof schema> }) {
 	const [isPending, setIsPending] = useState<boolean>(false);
 	const queryClient = useQueryClient();
 	const form = useForm<z.infer<typeof schema>>({
@@ -63,7 +62,7 @@ export function SetupScreen({ data }: { data?: z.infer<typeof inputData> }) {
 		queryClient.invalidateQueries({ queryKey: ["user"] });
 	});
 	return (
-		<Dialog open onOpenChange={() => {}}>
+		<Dialog open onOpenChange={() => null}>
 			<DialogContent showCloseButton={false}>
 				<DialogHeader>
 					<h1>User Setup</h1>

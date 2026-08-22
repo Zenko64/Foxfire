@@ -6,6 +6,7 @@ import {
 	useQueryClient,
 } from "@tanstack/react-query";
 import type { InferRequestType, InferResponseType } from "hono/client";
+import { toast } from "@/components/ui/toast";
 import { client } from "@/lib/client";
 import { ApiError } from "@/lib/errors";
 
@@ -31,7 +32,7 @@ export function usePosts(
 }
 
 export function usePost(
-	nanoid: string,
+	nanoid?: string,
 	options?: Partial<UseQueryOptions<Post, ApiError>>,
 ) {
 	return useQuery({
@@ -43,8 +44,10 @@ export function usePost(
 				param: { nanoid },
 			});
 			if (!data.ok) throw new ApiError("Failed to fetch post.", data.status);
+
 			return data.json();
 		},
+		enabled: Boolean(nanoid),
 		...options,
 	});
 }
@@ -61,6 +64,13 @@ export function useCreatePost(
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["posts"] });
+		},
+		onError: (err) => {
+			toast.add({
+				type: "error",
+				title: "Failed to create post.",
+				description: err.message,
+			});
 		},
 		...options,
 	});
@@ -82,6 +92,13 @@ export function useDeletePost(
 			queryClient.setQueriesData<Post[]>({ queryKey: ["posts"] }, (prev) =>
 				prev?.filter((el) => el.nanoid !== nanoid),
 			);
+		},
+		onError: (err) => {
+			toast.add({
+				type: "error",
+				title: "Failed to delete post.",
+				description: err.message,
+			});
 		},
 		...options,
 	});
@@ -114,6 +131,13 @@ export function usePatchPost(
 						p.nanoid === updatedPost.nanoid ? updatedPost : p,
 					) ?? [],
 			);
+		},
+		onError: (err) => {
+			toast.add({
+				type: "error",
+				title: "Failed to update post.",
+				description: err.message,
+			});
 		},
 		...options,
 	});

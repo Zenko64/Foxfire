@@ -8,18 +8,20 @@ export type User = InferResponseType<
 >;
 
 export function useUser(
-	username: string,
+	username?: string,
 	options?: Partial<UseQueryOptions<User, ApiError>>,
 ) {
 	return useQuery({
 		queryKey: ["user", username],
 		queryFn: async (): Promise<User> => {
 			const data = await client.api.auth.user[":username"].$get({
-				param: { username },
+				param: { username: username ?? "" }, // This assertion is here because by default we only run the query if the username is valid by default, due to the enabled property.
 			});
 			if (!data.ok) throw new ApiError("Failed to fetch user.", data.status);
 			return data.json();
 		},
+		enabled: Boolean(username),
+
 		...options,
 	});
 }

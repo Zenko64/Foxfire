@@ -1,6 +1,6 @@
 import z from "zod";
 
-const privacy = z.enum(
+export const privacyEnum = z.enum(
 	["public", "private", "unlisted"],
 	"The post's privacy level is missing.",
 );
@@ -12,7 +12,7 @@ export const postSchema = z.object({
 		.max(4000, "Your post can only contain up to 4000 characters.")
 		.trim(),
 	pinned: z.boolean(),
-	privacy: privacy,
+	privacy: privacyEnum,
 });
 
 export const authSchema = z.object({
@@ -38,6 +38,6 @@ export const authSchema = z.object({
 	displayUsername: z
 		.string()
 		.trim()
-		.min(1, "Please enter a profile name.")
-		.max(30, "Your profile name must be at most 30 characters long."),
+		.min(1, "Please enter a display name.")
+		.max(30, "Your display name must be at most 30 characters long."),
 });
