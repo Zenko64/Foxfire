@@ -45,13 +45,16 @@ export const attachAuth = createMiddleware(async (c, next) => {
 
 /**
  * @name requireSetup
- * @description requireSetup forces the caller to have finished the account setup before proceeding.
+ * @description requireSetup forces the caller (logged in) to have finished the account setup before proceeding.
  */
 export const requireSetup = createMiddleware(async (c, next) => {
 	const session = await auth.api.getSession({
 		headers: c.req.raw.headers,
 	});
-	if (!session?.user.username || !session.user.displayUsername) {
+	if (
+		session?.user &&
+		(!session?.user.username || !session.user.displayUsername)
+	) {
 		throw new ForbiddenError(
 			"You are required to complete the setup before accessing this resource.",
 		);
