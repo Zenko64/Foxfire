@@ -6,7 +6,6 @@ import { Toaster } from "./ui/toast";
 
 export function Layout() {
 	const { data } = authClient.useSession();
-
 	return (
 		<>
 			<Navbar />

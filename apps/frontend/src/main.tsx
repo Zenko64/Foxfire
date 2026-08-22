@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router";
 import "./assets/css/main.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 import { Layout } from "./components/Layout";
 import { PostsPage } from "./pages/Posts";
 import { ProfilePage } from "./pages/Profile";
@@ -12,6 +13,7 @@ const queryClient = new QueryClient();
 
 const router = createBrowserRouter([
 	{
+		ErrorBoundary: ErrorBoundary,
 		element: <Layout />,
 		children: [
 			{
