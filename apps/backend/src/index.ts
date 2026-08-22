@@ -1,3 +1,8 @@
+/**
+ * @name Index
+ * @description Foxfire Backend Entrypoint.
+ * @author Simi
+ */
 import { serveHttp } from "./core/http";
 import logger from "./core/logger";
 

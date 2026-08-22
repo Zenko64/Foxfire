@@ -1,8 +1,14 @@
+import type { ApiErrorCode, ApiErrorData } from "@foxfire/types";
+
 export class ApiError extends Error {
-	public status: number;
-	constructor(message: string, status: number) {
-		super(message);
-		this.status = status;
+	readonly status: number;
+	readonly code: ApiErrorCode;
+	readonly fields?: ApiErrorData["fields"];
+	constructor(data: ApiErrorData, status: number) {
+		super(data.message);
 		this.name = "ApiError";
+		this.status = status;
+		this.code = data.code;
+		this.fields = data.fields;
 	}
 }

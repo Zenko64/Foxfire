@@ -1,12 +1,17 @@
+import type { ApiErrorCode } from "@foxfire/types";
+
 export abstract class AppError extends Error {
 	abstract override name: string;
+	abstract readonly code: ApiErrorCode;
 	abstract readonly http: {
 		status: number;
 	};
+	readonly fields?: Record<string, string[]>;
 }
 
 export class NotFoundError extends AppError {
 	override name: string = "NotFoundError";
+	readonly code: ApiErrorCode = "NOT_FOUND";
 	readonly http = {
 		status: 404,
 	};
@@ -17,6 +22,7 @@ export class NotFoundError extends AppError {
 
 export class BadRequestError extends AppError {
 	override name: string = "BadRequestError";
+	readonly code: ApiErrorCode = "BAD_REQUEST";
 	readonly http = {
 		status: 400,
 	};
@@ -27,6 +33,7 @@ export class BadRequestError extends AppError {
 
 export class ForbiddenError extends AppError {
 	override name: string = "ForbiddenError";
+	readonly code: ApiErrorCode = "FORBIDDEN";
 	readonly http = {
 		status: 403,
 	};
@@ -39,6 +46,7 @@ export class ForbiddenError extends AppError {
 
 export class UnauthorizedError extends AppError {
 	override name: string = "UnauthorizedError";
+	readonly code: ApiErrorCode = "UNAUTHORIZED";
 	readonly http = {
 		status: 401,
 	};
@@ -49,6 +57,7 @@ export class UnauthorizedError extends AppError {
 
 export class InternalError extends AppError {
 	override name: string = "InternalError";
+	readonly code: ApiErrorCode = "INTERNAL_ERROR";
 	readonly http = {
 		status: 500,
 	};
