@@ -5,7 +5,8 @@ import { client } from "@/lib/client";
 import { ApiError } from "@/lib/errors";
 
 export type User = InferResponseType<
-	(typeof client.api.auth.user)[":username"]["$get"]
+	(typeof client.api.auth.user)[":username"]["$get"],
+	200
 >;
 
 export function useUser(

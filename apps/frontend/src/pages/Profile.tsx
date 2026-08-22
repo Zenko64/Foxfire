@@ -1,14 +1,7 @@
-import { BanIcon, Edit, Ghost, Plus, User } from "lucide-react";
-import { useEffect, useState } from "react";
-import {
-	Navigate,
-	useNavigate,
-	useParams,
-	useSearchParams,
-} from "react-router";
-import { Composer } from "@/components/posts/Composer";
+import { BanIcon, Edit, Ghost, User } from "lucide-react";
+import { useState } from "react";
+import { Navigate, useNavigate, useParams } from "react-router";
 import { PostsFeed } from "@/components/posts/Feed";
-import { PostCard } from "@/components/posts/Post";
 import { ProfileEditDialog } from "@/components/profile/ProfileEditor";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
@@ -19,13 +12,9 @@ import {
 	EmptyMedia,
 	EmptyTitle,
 } from "@/components/ui/empty";
-import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { type Post, usePost, usePosts } from "@/hooks/posts/queries";
-import { useDebounce } from "@/hooks/useDebounce";
 import { useUser } from "@/hooks/users/queries";
 import { authClient } from "@/lib/auth";
-import { cn } from "@/lib/utils";
 
 export function ProfilePage() {
 	const nav = useNavigate();
