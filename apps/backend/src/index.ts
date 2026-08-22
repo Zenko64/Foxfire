@@ -5,6 +5,7 @@
  */
 import { serveHttp } from "./core/http";
 import logger from "./core/logger";
+import { checkDb } from "./db";
 
 console.log(
 	`
@@ -16,4 +17,9 @@ console.log(
 `,
 );
 logger.info("Starting up FoxFire...");
-serveHttp();
+(async () => {
+	await checkDb();
+})().then(() => {
+	serveHttp();
+	logger.info("Foxfire Running!");
+});

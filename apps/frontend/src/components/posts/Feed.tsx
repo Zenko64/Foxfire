@@ -211,7 +211,7 @@ export function PostsFeed({
 										: null}
 						</EmptyDescription>
 						<EmptyContent>
-							{((session && !props.author) || isAuthor) && (
+							{((session && !props.author) || (session && isAuthor)) && (
 								<Button onClick={() => setComposer({})}>
 									<Plus /> New Post
 								</Button>
