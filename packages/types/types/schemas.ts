@@ -41,3 +41,5 @@ export const authSchema = z.object({
 		.min(1, "Please enter a display name.")
 		.max(30, "Your display name must be at most 30 characters long."),
 });
+
+export type PrivacyLevel = z.infer<typeof privacyEnum>;

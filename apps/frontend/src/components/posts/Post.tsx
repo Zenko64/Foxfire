@@ -1,10 +1,10 @@
+import type { PrivacyLevel } from "@foxfire/types";
 import dayjs from "dayjs";
 import isToday from "dayjs/plugin/isToday";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { Edit, Menu, Share, Trash, User } from "lucide-react";
 import { useNavigate } from "react-router";
 import type { Post } from "@/hooks/posts/queries";
-import type { PrivacyLevel } from "@/types";
 import { privacyLabels } from "../constants/Privacy";
 import { Button } from "../ui/button";
 import {

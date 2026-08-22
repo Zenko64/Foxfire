@@ -56,12 +56,6 @@ export function Composer({
 			{ pinned: false, privacy, text },
 			{
 				onSuccess: onComplete,
-				onError: (err: unknown) =>
-					toast.add({
-						title: "Failed to create post.",
-						description: err instanceof Error ? err.message : String(err),
-						type: "error",
-					}),
 			},
 		);
 	};

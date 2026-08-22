@@ -14,4 +14,5 @@ export const errorSchema = z.object({
 	fields: z.record(z.string(), z.array(z.string())).optional(),
 });
 
+export type ApiErrorData = z.infer<typeof errorSchema>;
 export type ApiErrorCode = z.infer<typeof apiErrEnum>;
