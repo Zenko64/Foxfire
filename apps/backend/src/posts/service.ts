@@ -261,5 +261,5 @@ export async function deletePost(
 		}
 	}
 
-	return { sucesss: true };
+	return { success: true };
 }
