@@ -13,24 +13,28 @@ const queryClient = new QueryClient();
 
 const router = createBrowserRouter([
 	{
-		ErrorBoundary: ErrorBoundary,
 		element: <Layout />,
 		children: [
 			{
-				index: true,
-				element: <PostsPage />,
-			},
-			{
-				path: "/posts",
-				element: <PostsPage />,
-			},
-			{
-				path: "/user",
-				element: <ProfilePage />,
-			},
-			{
-				path: "/user/:username",
-				element: <ProfilePage />,
+				ErrorBoundary: ErrorBoundary,
+				children: [
+					{
+						index: true,
+						element: <PostsPage />,
+					},
+					{
+						path: "/posts",
+						element: <PostsPage />,
+					},
+					{
+						path: "/user",
+						element: <ProfilePage />,
+					},
+					{
+						path: "/user/:username",
+						element: <ProfilePage />,
+					},
+				],
 			},
 		],
 	},
