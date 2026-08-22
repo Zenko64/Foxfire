@@ -131,7 +131,7 @@ export function ProfilePage() {
 				</div>
 			</div>
 			<Separator />
-			<PostsFeed author={profileUsername} />
+			<PostsFeed author={profileUsername} enableComposer={isOwner} />
 		</div>
 	);
 }
