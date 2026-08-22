@@ -12,6 +12,7 @@ import z from "zod";
 import { requireAuth } from "../../auth/http/middlewares";
 import { factory } from "../../core/http/factory";
 import db from "../../db";
+import { NotFoundError } from "../../lib/errors";
 import * as handlers from "../service";
 
 const postsRouter = factory
@@ -32,6 +33,9 @@ const postsRouter = factory
 						})
 					)?.id
 				: undefined;
+
+			if (!authorId && author)
+				throw new NotFoundError("The provided author was not found.");
 
 			return c.json(
 				await handlers.getPosts(
