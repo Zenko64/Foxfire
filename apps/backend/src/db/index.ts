@@ -18,7 +18,7 @@ const db = drizzle(new Pool({ connectionString: env.DATABASE_URL }), {
 });
 
 export async function checkDb() {
-	db.execute(sql`SELECT 1`);
+	await db.execute(sql`SELECT 1`);
 	await migrate(db, { migrationsFolder: "./drizzle" });
 }
 
