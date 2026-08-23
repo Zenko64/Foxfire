@@ -25,6 +25,11 @@ const envSchema = z.object({
 	NODE_ENV: z
 		.enum(["development", "production", "test"])
 		.default("development"),
+	...(process.env.NODE_ENV === "production" && {
+		BETTER_AUTH_SECRET: z
+			.string()
+			.min(32, "The BetterAuth secret key is required."),
+	}),
 });
 
 export const env = envSchema.parse(process.env);

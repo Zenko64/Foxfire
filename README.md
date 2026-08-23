@@ -34,3 +34,9 @@ Foxfire is a small, minimal, micro-blog that allows users to post status updates
 | Db       | Postgresql+Drizzle                   |
 | Auth     | BetterAuth                           |
 | Frontend | React, ShadCN, RHF, React Query, Zod |
+
+## How to deploy
+- Git clone this project
+-   Run ```bun i```
+ - Go to apps/backend , copy the ```.env.example``` to a regular ``` .env``` and fill out the data according to the instructions
+-  Go back to project root and run ```bun dev``` to start
