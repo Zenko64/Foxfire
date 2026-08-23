@@ -2,12 +2,13 @@ module.exports = {
 	apps: [
 		{
 			name: "Foxfire",
-			script: "./apps/backend/dist/index.js",
+			script: "./dist/index.js",
 			autorestart: true,
 			env: { NODE_ENV: "production" },
-			insances: 1,
+			instances: 1,
 			exec_mode: "fork",
-			interpreter: "~/.bun/bin/bun",
+			interpreter: "bun",
+			cwd: "./apps/backend",
 		},
 	],
 };
