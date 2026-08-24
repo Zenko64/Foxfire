@@ -35,6 +35,24 @@ Foxfire is a small, minimal, micro-blog that allows users to post status updates
 | Auth     | BetterAuth                           |
 | Frontend | React, ShadCN, RHF, React Query, Zod |
 
+## How to run locally
+1. First, you should clone the repo and install the dependencies:
+```bash
+git clone https://github.com/Zenko64/Foxfire foxfire && cd foxfire
+bun install
+```
+2. Setup a PostgreSQL server and create the database
+```sql
+CREATE DATABASE foxfire;
+```
+For getting a quick database, copy the root ```.env.example``` to ```.env``` and set your ```PG_PASS```. The default user is ```postgres``` and ```PG_PASS``` sets your default password. Then bring the compose up, using either Docker compose, or Podman compose.
+
+3. Copy ```apps/backend/.env.example``` to ```apps/backend/.env``` and fill in the needed information
+  - ```DATABASE_URL```: ex: ```postgres://postgres:password@localhost:5432/foxfire```
+  - ```APP_URL```: Where the application will be publicly served
+  - ```HOST```: Host to bind to. 127.0.0.1 by default.
+  - ```PORT```: Port to bind to. 4000 by default.
+
 ## How to deploy
 1. First, you should clone the repo and install the dependencies:
 ```bash
