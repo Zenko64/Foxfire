@@ -7,14 +7,15 @@
 			"port": 5432,
 			"driver": "PostgreSQL",
 			"name": "Foxfire",
-			"database": "foxfire",
+			"database": "postgres",
 			"username": "postgres"
 		},
 		{
 			"ssh": "Disabled",
 			"previewLimit": 50,
-			"server": "192.168.0.3",
+			"server": "192.168.0.2",
 			"port": 5432,
+			"askForPassword": true,
 			"driver": "PostgreSQL",
 			"name": "Server",
 			"database": "foxfire",

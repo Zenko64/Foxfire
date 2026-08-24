@@ -24,7 +24,22 @@ export function useUser(
 			return data.json();
 		},
 		enabled: Boolean(username),
+		...options,
+	});
+}
 
+export function useUsers(
+	search: string,
+	options?: Partial<UseQueryOptions<User[], ApiError>>,
+) {
+	return useQuery({
+		queryKey: ["users", search],
+		queryFn: async (): Promise<User[]> => {
+			const data = await client.api.auth.users.$get({ query: { search } });
+			if (!data.ok)
+				throw new ApiError((await data.json()) as ApiErrorData, data.status);
+			return data.json();
+		},
 		...options,
 	});
 }
