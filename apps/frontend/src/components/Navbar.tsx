@@ -1,4 +1,12 @@
-import { Home, KeyIcon, LogOut, User, UserIcon } from "lucide-react";
+import {
+	Home,
+	KeyIcon,
+	LogOut,
+	Search,
+	User,
+	UserIcon,
+	UserSearch,
+} from "lucide-react";
 import "@/assets/css/navbar.css";
 import { useState } from "react";
 import { useNavigate } from "react-router";
@@ -33,6 +41,15 @@ export function Navbar() {
 					onClick={() => nav("/posts")}
 				>
 					<Home className="size-7.5 group-active:scale-95 group-hover:text-primary transition-all" />
+				</Button>
+				<Separator orientation="vertical" />
+				<Button
+					variant="ghost"
+					size="icon"
+					className="h-full w-auto aspect-square group"
+					onClick={() => nav("/users")}
+				>
+					<Search className="size-7.5 group-active:scale-95 group-hover:text-primary transition-all" />
 				</Button>
 				<Separator orientation="vertical" />
 			</span>
