@@ -7,34 +7,35 @@ import { ErrorBoundary } from "./components/ErrorBoundary";
 import { Layout } from "./components/Layout";
 import { PostsPage } from "./pages/Posts";
 import { ProfilePage } from "./pages/Profile";
+import { UsersPage } from "./pages/Users";
 import { ThemeProvider } from "./providers/ThemeProvider";
 
 const queryClient = new QueryClient();
 
 const router = createBrowserRouter([
 	{
+		ErrorBoundary: ErrorBoundary,
 		element: <Layout />,
 		children: [
 			{
-				ErrorBoundary: ErrorBoundary,
-				children: [
-					{
-						index: true,
-						element: <PostsPage />,
-					},
-					{
-						path: "/posts",
-						element: <PostsPage />,
-					},
-					{
-						path: "/user",
-						element: <ProfilePage />,
-					},
-					{
-						path: "/user/:username",
-						element: <ProfilePage />,
-					},
-				],
+				index: true,
+				element: <PostsPage />,
+			},
+			{
+				path: "/posts",
+				element: <PostsPage />,
+			},
+			{
+				path: "/users",
+				element: <UsersPage />,
+			},
+			{
+				path: "/user",
+				element: <ProfilePage />,
+			},
+			{
+				path: "/user/:username",
+				element: <ProfilePage />,
 			},
 		],
 	},

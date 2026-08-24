@@ -3,10 +3,17 @@
  * @name Auth Service
  * @description This file contains queries and interactions with the auth data at a service layer. Used for providing queries not provided by BetterAuth.
  */
-import { and, eq } from "drizzle-orm";
+import { and, eq, ilike, or } from "drizzle-orm";
 import db from "../db";
 import type { user } from "../db/auth-schema";
 import { BadRequestError, NotFoundError } from "../lib/errors";
+
+const userColumns = {
+	id: true,
+	displayUsername: true,
+	username: true,
+	image: true,
+} as const;
 
 /**
  * @name getUser
@@ -29,12 +36,21 @@ export async function getUser(
 			}
 			return and(...conditions);
 		},
-		columns: {
-			displayUsername: true,
-			username: true,
-			image: true,
-		},
+		columns: userColumns,
 	});
 	if (!result) throw new NotFoundError("The requested user was not found.");
+	return result;
+}
+
+export async function getUsers(query: string, limit?: number) {
+	const result = db.query.user.findMany({
+		where: (u) =>
+			or(
+				ilike(u.username, `%${query}%`),
+				ilike(u.displayUsername, `%${query}%`),
+			),
+		columns: userColumns,
+		limit: limit,
+	});
 	return result;
 }
