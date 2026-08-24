@@ -36,7 +36,33 @@ Foxfire is a small, minimal, micro-blog that allows users to post status updates
 | Frontend | React, ShadCN, RHF, React Query, Zod |
 
 ## How to deploy
-- Git clone this project
--   Run ```bun i```
- - Go to apps/backend , copy the ```.env.example``` to a regular ``` .env``` and fill out the data according to the instructions
--  Go back to project root and run ```bun dev``` to start
+1. First, you should clone the repo and install the dependencies:
+```bash
+git clone https://github.com/Zenko64/Foxfire foxfire && cd foxfire
+bun install
+```
+2. Setup a PostgreSQL server and create the database
+```sql
+CREATE DATABASE foxfire;
+```
+For getting a quick database, copy the root ```.env.example``` to ```.env``` and set your ```PG_PASS```. The default user is ```postgres``` and ```PG_PASS``` sets your default password. Then bring the compose up.
+
+3. Copy ```apps/backend/.env.example``` to ```apps/backend/.env``` and fill in the needed information
+  - ```DATABASE_URL```: ex: ```postgres://postgres:password@localhost:5432/foxfire```
+  - ```APP_URL```: Where the application will be publicly served
+  - ```BETTER_AUTH_SECRET```: Required in production, generate a secret using ```openssl rand -base64 32```
+  - ```HOST```: Host to bind to. 127.0.0.1 by default.
+  - ```PORT```: Port to bind to. 4000 by default.
+
+4. Build the apps:
+```sh
+bun run build
+```
+
+5. Start the backend with pm2 (Runs on production NODE_ENV)
+```sh
+pm2 start ecosystem.config.cjs
+```
+Database migrations should run automatically on startup.
+
+6. Serve ```apps/frontend/dist``` as a SPA (every unmatched route leads to index.html) on your preferred HTTP server, and proxy the ```/api/*``` route to your backend.
