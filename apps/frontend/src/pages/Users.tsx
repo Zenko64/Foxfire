@@ -1,4 +1,4 @@
-import { User, UserSearch } from "lucide-react";
+import { Ghost, User, UserSearch } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { Card, CardHeader } from "@/components/ui/card";
@@ -32,7 +32,7 @@ export function UsersPage() {
 			</div>
 			<Separator />
 			<div className="flex flex-col p-4 gap-2">
-				{users ? (
+				{users && users.length > 0 ? (
 					users?.map((u) => (
 						<Card
 							className="hover:cursor-pointer"
@@ -57,7 +57,7 @@ export function UsersPage() {
 							</CardHeader>
 						</Card>
 					))
-				) : (
+				) : !search && !users ? (
 					<Empty>
 						<EmptyHeader>
 							<EmptyMedia>
@@ -66,6 +66,18 @@ export function UsersPage() {
 							<EmptyTitle>Find Users</EmptyTitle>
 							<EmptyDescription>
 								Search for people you know to see their posts.
+							</EmptyDescription>
+						</EmptyHeader>
+					</Empty>
+				) : (
+					<Empty>
+						<EmptyHeader>
+							<EmptyMedia>
+								<Ghost />
+							</EmptyMedia>
+							<EmptyTitle>No Results</EmptyTitle>
+							<EmptyDescription>
+								We looked everywhere, and found nothing...
 							</EmptyDescription>
 						</EmptyHeader>
 					</Empty>
